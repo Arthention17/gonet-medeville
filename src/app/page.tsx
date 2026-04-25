@@ -368,11 +368,14 @@ export default function Home() {
           variant="wipe"
         />
 
-        {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Heritage timeline ═══════ */}
-        <section ref={heritageSec} className="py-20 md:py-28 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
+        {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Vertical timeline ═══════ */}
+        <section ref={heritageSec} className="py-24 md:py-32 px-8 md:px-16 lg:px-24 relative" style={{ background: "var(--bg)" }}>
+          {/* Vertical gold timeline line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-[1px] hidden md:block" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(158,130,90,0.15) 15%, rgba(158,130,90,0.15) 85%, transparent 100%)" }} />
+
           <div className="max-w-[1300px] mx-auto">
-            <div className="mb-16 md:mb-20" data-reveal>
-              <span className="font-mono text-[11px] tracking-[3px] block mb-3" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+            <div className="text-center mb-20 md:mb-28" data-reveal>
+              <span className="font-mono text-[11px] tracking-[3px] block mb-4" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
                 CHAPITRE IV — L&apos;HÉRITAGE
               </span>
               <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(34px, 4.5vw, 60px)" }}>
@@ -380,28 +383,42 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="flex flex-col gap-20 md:gap-28">
-              {heritage.map((item, i) => (
-                <div
-                  key={item.year}
-                  data-heritage-row
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-center ${i % 2 === 1 ? "md:[direction:rtl]" : ""}`}
-                >
-                  {/* Image — propre à chaque date */}
-                  <div className={`relative overflow-hidden photo-grade aspect-[4/3] ${i % 2 === 1 ? "md:[direction:ltr]" : ""}`} data-reveal>
-                    <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out hover:scale-[1.05]" />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.4) 0%, transparent 50%)" }} />
-                    <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/90" style={{ fontFamily: "'DM Mono', monospace" }}>{item.year}</div>
-                  </div>
-                  {/* Texte */}
-                  <div className={`flex items-start gap-6 md:gap-8 ${i % 2 === 1 ? "md:[direction:ltr]" : ""}`}>
-                    <span data-h-year className="font-serif text-[clamp(48px,6vw,90px)] font-light leading-none flex-shrink-0 tracking-[-2px] will-change-transform" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
-                    <div className="pt-2 md:pt-3">
-                      <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[440px] will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
+            <div className="flex flex-col gap-24 md:gap-0">
+              {heritage.map((item, i) => {
+                const isRight = i % 2 === 1;
+                return (
+                  <div key={item.year} data-heritage-row className="relative md:grid md:grid-cols-2 md:gap-16 md:min-h-[420px] md:mb-24">
+                    {/* Timeline dot — centered on the gold line */}
+                    <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center justify-center">
+                      <div className="w-3 h-3 rounded-full" style={{ background: "var(--gold)", boxShadow: "0 0 0 6px var(--bg), 0 0 0 7px rgba(158,130,90,0.2)" }} />
+                    </div>
+
+                    {/* Image side */}
+                    <div className={`relative overflow-hidden photo-grade mb-6 md:mb-0 ${isRight ? "md:order-2" : "md:order-1"}`} data-reveal>
+                      <div className="aspect-[16/10] md:aspect-[4/3] relative overflow-hidden group">
+                        <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06]" />
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.05) 50%)" }} />
+                        {/* Year overlay on the image */}
+                        <div className="absolute bottom-5 left-6">
+                          <span className="font-serif text-[clamp(36px,5vw,72px)] font-light text-white/90 leading-none tracking-[-2px]" style={{ textShadow: "0 2px 20px rgba(14,14,12,0.5)" }}>{item.year}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Text side */}
+                    <div className={`flex items-center ${isRight ? "md:order-1 md:justify-end" : "md:order-2"}`}>
+                      <div className={`max-w-[420px] ${isRight ? "md:text-right md:pr-12" : "md:pl-12"}`}>
+                        <span data-h-year className="font-mono text-[10px] tracking-[3px] block mb-4" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+                          {item.year}
+                        </span>
+                        <p data-h-text className="font-sans text-[14px] leading-[2] will-change-transform" style={{ color: "var(--ink2)" }}>
+                          {item.text}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
