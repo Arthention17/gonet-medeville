@@ -1,8 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@300;400&display=swap');
 
 :root {
   --gold: #9E825A;
@@ -12,23 +10,76 @@
   --cream: #F7F5F0;
   --bg: #F7F5F0;
   --warm: #E8E2D6;
+  --wine: #5B1A2E;
 }
 
 ::selection { background: var(--gold); color: white; }
 html { overflow-x: hidden; }
-body { background: var(--bg); color: var(--ink); overflow-x: hidden; font-family: 'Instrument Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-
-@media (pointer: fine) { * { cursor: none !important; } }
-
-.grain::after {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.022;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+body {
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-family: 'Instrument Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+/* Grain — heavier than before, masks photo compression */
+.grain::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Photo grading — applied universally to mask compression / boost mood */
+.photo-grade img,
+img.photo-grade,
+.photo-grade {
+  filter: saturate(1.12) contrast(1.08) brightness(1.02);
+}
+.photo-grade::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.18) 100%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.012) 2px 3px);
+  mix-blend-mode: multiply;
+}
+
+/* Ken Burns slow drift on hero */
+@keyframes kenBurns {
+  0%   { transform: scale(1.06) translate(0, 0); }
+  50%  { transform: scale(1.14) translate(-1.5%, -1%); }
+  100% { transform: scale(1.10) translate(1%, 0.5%); }
+}
+
+/* Falling dust particles */
+.dust-layer {
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(232,199,121,0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 14%, rgba(232,199,121,0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 33% 88%, rgba(232,199,121,0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 64% 56%, rgba(232,199,121,0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 70%, rgba(232,199,121,0.3) 50%, transparent 51%),
+    radial-gradient(2px 2px at 22% 40%, rgba(232,199,121,0.25) 50%, transparent 51%);
+  background-size: 600px 600px, 800px 800px, 700px 700px, 500px 500px, 900px 900px, 750px 750px;
+  animation: dustFall 18s linear infinite;
+  opacity: 0.7;
+}
+@keyframes dustFall {
+  0%   { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  100% { background-position: -10px 600px, 8px 800px, -6px 700px, 12px 500px, -4px 900px, 10px 750px; }
+}
+
+/* Cursor (legacy classes — overridden by component) */
 .cursor-ring {
   position: fixed; width: 36px; height: 36px; border: 1px solid var(--gold); border-radius: 50%;
   pointer-events: none; z-index: 10000; transform: translate(-50%,-50%);
-  transition: width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1);
+  transition: width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, opacity 0.3s;
   mix-blend-mode: difference; opacity: 0.6;
 }
 .cursor-dot {
@@ -36,36 +87,16 @@ body { background: var(--bg); color: var(--ink); overflow-x: hidden; font-family
   pointer-events: none; z-index: 10001; transform: translate(-50%,-50%); opacity: 0.8;
 }
 
-@keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-.animate-marquee { animation: marqueeScroll 30s linear infinite; }
+/* Marquees */
+@keyframes marqueeScroll  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@keyframes marqueeScrollR { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+.animate-marquee  { animation: marqueeScroll  45s linear infinite; }
+.animate-marqueeR { animation: marqueeScrollR 45s linear infinite; }
+
+/* Scroll line */
 @keyframes scrollLine { 0%{transform:translateY(-100%);opacity:0} 50%{opacity:1} 100%{transform:translateY(200%);opacity:0} }
 
-.btn-fill {
-  position: relative; overflow: hidden; border: 1px solid var(--gold); background: transparent;
-  font-family: 'Instrument Sans', sans-serif; font-size: 10px; letter-spacing: 3px;
-  text-transform: uppercase; padding: 14px 40px; color: var(--gold); transition: color 0.5s;
-}
-.btn-fill::before {
-  content: ''; position: absolute; inset: 0; background: var(--gold);
-  transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
-}
-.btn-fill:hover { color: var(--bg); }
-.btn-fill:hover::before { transform: scaleY(1); transform-origin: top; }
-.btn-fill span { position: relative; z-index: 1; }
-
-.btn-fill-light {
-  position: relative; overflow: hidden; border: 1px solid rgba(247,245,240,0.3); background: transparent;
-  font-family: 'Instrument Sans', sans-serif; font-size: 10px; letter-spacing: 3px;
-  text-transform: uppercase; padding: 14px 40px; color: #F7F5F0; transition: color 0.5s;
-}
-.btn-fill-light::before {
-  content: ''; position: absolute; inset: 0; background: #F7F5F0;
-  transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
-}
-.btn-fill-light:hover { color: var(--ink); }
-.btn-fill-light:hover::before { transform: scaleY(1); transform-origin: top; }
-.btn-fill-light span { position: relative; z-index: 1; }
-
+/* Hover underline */
 .link-hover { position: relative; }
 .link-hover::after {
   content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 1px;
@@ -74,6 +105,17 @@ body { background: var(--bg); color: var(--ink); overflow-x: hidden; font-family
 }
 .link-hover:hover::after { transform: scaleX(1); transform-origin: left; }
 
-.img-zoom { overflow: hidden; }
-.img-zoom img { transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
-.img-zoom:hover img { transform: scale(1.06); }
+/* Button fill */
+.btn-fill {
+  position: relative; overflow: hidden; border: 1px solid var(--gold); background: transparent;
+  font-family: 'Instrument Sans', sans-serif; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; padding: 14px 40px; color: var(--gold);
+  transition: color 0.5s;
+}
+.btn-fill::before {
+  content: ''; position: absolute; inset: 0; background: var(--gold);
+  transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.btn-fill:hover { color: var(--bg); }
+.btn-fill:hover::before { transform: scaleY(1); transform-origin: top; }
+.btn-fill span { position: relative; z-index: 1; }
