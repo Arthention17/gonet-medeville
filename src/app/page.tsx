@@ -16,8 +16,8 @@ import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
 
-// Seulement 4 cuvées vedettes dans la galerie + CTA "et plus encore"
-const FEATURED_IDS = ["gilette", "champ-alouette", "monplaisir", "eyrins"];
+// 3 cuvées dans la galerie (Gilette a son propre showcase au-dessus)
+const FEATURED_IDS = ["champ-alouette", "monplaisir", "eyrins"];
 const featuredWines = FEATURED_IDS
   .map(id => wines.find(w => w.id === id))
   .filter((w): w is (typeof wines)[number] => Boolean(w));
