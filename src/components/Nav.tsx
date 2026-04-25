@@ -18,7 +18,7 @@ export default function Nav() {
     }}>
       <a href="#" className="flex items-baseline gap-1 group" data-hover>
         <span className="font-serif text-lg tracking-[2px] font-medium">Gonet</span>
-        <span className="font-serif text-lg tracking-[2px] font-light italic text-[var(--gold)]">Médeville</span>
+        <span className="font-serif text-lg tracking-[2px] font-light italic text-[var(--gold)]">Medeville</span>
       </a>
 
       <div className="hidden md:flex items-center gap-8">

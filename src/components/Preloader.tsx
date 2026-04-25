@@ -69,7 +69,7 @@ export default function Preloader({ onComplete }: Props) {
         className="font-sans text-[10px] tracking-[6px] uppercase mt-6"
         style={{ color: "var(--ink2)" }}
       >
-        Gonet-Médeville
+        Gonet-Medeville
       </span>
     </div>
   );
