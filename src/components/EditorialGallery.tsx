@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,24 +10,27 @@ gsap.registerPlugin(ScrollTrigger);
 interface Props { wines: Wine[]; }
 
 /**
- * Gallery v4 — CSS sticky + GSAP scrub. ZERO pin = ZERO spacer = ZERO duplicate.
+ * Gallery v5 — sticky + scrub.
  *
- * Architecture :
- *   <section height="100vh + totalShift">     ← section très haute = crée l'espace scroll
- *     <div sticky top-0 h-screen>              ← reste collé pendant tout le scroll
- *       <div track translateX>                 ← se déplace horizontalement via scrub
+ * Section structure:
+ *   <div height="INTRO + 100vh + totalShift">
+ *     <div padding-top="INTRO">                    ← heading scrolls normally in this space
+ *       <div position="sticky" top="0" h-screen>   ← locks when heading reaches top
+ *         <track translateX>                        ← moves horizontally via GSAP scrub
+ *       </div>
  *     </div>
- *   </section>
+ *   </div>
  *
- * Quand le bas de la section quitte le viewport, le sticky se décolle naturellement
- * et la section suivante arrive. Pas de spacer GSAP, pas de doublon.
+ * The heading is INSIDE the sticky div, absolute-positioned at the top.
+ * When sticky kicks in, the heading stays put at the top of the viewport.
+ * No GSAP pin, no spacer, no duplicate.
  */
 export default function EditorialGallery({ wines }: Props) {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const tintRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [sectionH, setSectionH] = useState("100vh");
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -36,36 +39,27 @@ export default function EditorialGallery({ wines }: Props) {
     return () => mq.removeEventListener("change", u);
   }, []);
 
-  // Calcul de la hauteur de section côté client
-  const calcHeight = useCallback(() => {
-    const totalFrames = wines.length + 1;
-    const slideW = window.innerWidth * 0.6;
-    const totalShift = (totalFrames - 1) * slideW;
-    return `${window.innerHeight + totalShift}px`;
-  }, [wines.length]);
-
   useEffect(() => {
     if (isMobile) return;
-    setSectionH(calcHeight());
-    const onResize = () => setSectionH(calcHeight());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [isMobile, calcHeight]);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const sec = sectionRef.current;
+    const outer = outerRef.current;
     const track = trackRef.current;
-    if (!sec || !track) return;
+    const sticky = stickyRef.current;
+    if (!outer || !track || !sticky) return;
 
     const totalFrames = wines.length + 1;
     const slideW = window.innerWidth * 0.6;
     const totalShift = (totalFrames - 1) * slideW;
+    const vh = window.innerHeight;
+
+    // Section height: enough room for the horizontal scroll
+    // The sticky kicks in when the sticky div top reaches viewport top.
+    // We need totalShift px of scroll AFTER that for the horizontal movement.
+    outer.style.height = `${vh + totalShift}px`;
 
     const updateFocus = () => {
       const cx = window.innerWidth / 2;
       const items = track.querySelectorAll<HTMLElement>("[data-frame]");
-      const dots = sec.querySelectorAll<HTMLElement>("[data-dot]");
+      const dots = outer.querySelectorAll<HTMLElement>("[data-dot]");
       let activeIdx = 0, bestDist = Infinity;
 
       items.forEach((el, idx) => {
@@ -80,41 +74,43 @@ export default function EditorialGallery({ wines }: Props) {
         const prose = el.querySelectorAll<HTMLElement>("[data-prose]");
         const ghost = el.querySelector<HTMLElement>("[data-ghost]");
 
-        if (bottle) gsap.to(bottle, { scale: 0.78 + focus * 0.30, rotate: -3 * focus, y: (1 - focus) * 22, opacity: 0.45 + focus * 0.55, filter: `blur(${(1 - focus) * 1.5}px)`, duration: 0.55, ease: "power2.out", overwrite: "auto" });
-        if (txt) gsap.to(txt, { scale: 0.95 + focus * 0.05, opacity: 0.35 + focus * 0.65, y: (1 - focus) * 14, duration: 0.55, ease: "power2.out", overwrite: "auto" });
-        prose.forEach(p => gsap.to(p, { opacity: focus * focus, duration: 0.45, ease: "power2.out", overwrite: "auto" }));
-        if (ghost) gsap.to(ghost, { opacity: 0.10 + focus * 0.12, duration: 0.55, ease: "power2.out", overwrite: "auto" });
+        if (bottle) gsap.to(bottle, { scale: 0.78 + focus * 0.30, rotate: -3 * focus, y: (1 - focus) * 22, opacity: 0.45 + focus * 0.55, filter: `blur(${(1 - focus) * 1.5}px)`, duration: 0.5, ease: "power2.out", overwrite: "auto" });
+        if (txt) gsap.to(txt, { scale: 0.95 + focus * 0.05, opacity: 0.35 + focus * 0.65, y: (1 - focus) * 14, duration: 0.5, ease: "power2.out", overwrite: "auto" });
+        prose.forEach(p => gsap.to(p, { opacity: focus * focus, duration: 0.4, ease: "power2.out", overwrite: "auto" }));
+        if (ghost) gsap.to(ghost, { opacity: 0.10 + focus * 0.12, duration: 0.5, ease: "power2.out", overwrite: "auto" });
       });
 
       const accent = wines[Math.min(activeIdx, wines.length - 1)]?.accent || "#9E825A";
       if (tintRef.current) tintRef.current.style.background = `radial-gradient(ellipse at 50% 50%, ${hexToRgba(accent, 0.06)} 0%, transparent 60%)`;
       dots.forEach((d, i) => {
         d.style.background = i === activeIdx ? (i < wines.length ? wines[i].accent : "#9E825A") : "rgba(158,130,90,0.25)";
-        d.style.width = i === activeIdx ? "44px" : "22px";
+        d.style.width = (i === activeIdx ? 44 : 22) + "px";
       });
     };
 
-    // Scrub sans pin — le sticky CSS gère le "lock" visuel
     const tween = gsap.to(track, {
       x: -totalShift,
       ease: "none",
       scrollTrigger: {
-        trigger: sec,
+        trigger: outer,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.8,
+        scrub: 0.6,
         invalidateOnRefresh: true,
         onUpdate: updateFocus,
+        onRefresh: () => {
+          const newSlideW = window.innerWidth * 0.6;
+          const newShift = (totalFrames - 1) * newSlideW;
+          outer.style.height = `${window.innerHeight + newShift}px`;
+          updateFocus();
+        },
       },
     });
 
-    // Premier rendu
     updateFocus();
-
     return () => { tween.scrollTrigger?.kill(); tween.kill(); };
   }, [wines, isMobile]);
 
-  // ═══ MOBILE ═══
   if (isMobile) {
     return (
       <section id="collection" className="py-12 px-6" style={{ background: "var(--bg)" }}>
@@ -144,16 +140,18 @@ export default function EditorialGallery({ wines }: Props) {
   const totalFrames = wines.length + 1;
 
   return (
-    <div id="collection" ref={sectionRef} className="relative" style={{ height: sectionH, background: "var(--bg)" }}>
-      {/* Sticky viewport — reste collé tant qu'on scrolle dans la section haute */}
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <div id="collection" ref={outerRef} className="relative" style={{ background: "var(--bg)" }}>
+      {/* Sticky viewport */}
+      <div ref={stickyRef} className="sticky top-0 h-screen overflow-hidden">
         <div ref={tintRef} aria-hidden className="absolute inset-0 pointer-events-none" />
 
+        {/* Heading */}
         <div className="absolute top-10 md:top-14 left-8 md:left-14 z-20 pointer-events-none">
           <span className="font-mono text-[10px] tracking-[4px] block mb-2" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>LA COLLECTION</span>
           <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(28px, 3vw, 44px)", color: "var(--ink)" }}>Nos cuvées</h2>
         </div>
 
+        {/* Track */}
         <div ref={trackRef} className="flex h-screen items-center" style={{ width: `${20 + totalFrames * 60}vw`, paddingLeft: "20vw", paddingRight: "20vw", willChange: "transform" }}>
           {wines.map((wine, idx) => (
             <div key={wine.id} data-frame className="flex-shrink-0 h-full flex items-center justify-center relative" style={{ width: "60vw" }}>
@@ -184,8 +182,7 @@ export default function EditorialGallery({ wines }: Props) {
               <div data-ghost className="absolute bottom-[8%] right-[6%] font-serif font-light leading-none pointer-events-none select-none" style={{ fontSize: "clamp(80px, 12vw, 200px)", color: wine.accent, opacity: 0.14 }}>{wine.year}</div>
             </div>
           ))}
-
-          {/* CTA frame */}
+          {/* CTA */}
           <div data-frame className="flex-shrink-0 h-full flex items-center justify-center" style={{ width: "60vw" }}>
             <div data-text className="text-center max-w-[520px] px-8 will-change-[opacity,transform]">
               <div className="font-serif italic font-light mb-3" style={{ fontSize: "clamp(18px, 2vw, 24px)", color: "var(--gold)" }}>…et plus encore.</div>
@@ -196,6 +193,7 @@ export default function EditorialGallery({ wines }: Props) {
           </div>
         </div>
 
+        {/* Dots */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10 pointer-events-none">
           {Array.from({ length: totalFrames }).map((_, i) => (
             <div key={i} data-dot className="h-[2px] rounded-full transition-all duration-500" style={{ width: 24, background: "rgba(158,130,90,0.25)" }} />
