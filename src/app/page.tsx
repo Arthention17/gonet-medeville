@@ -9,11 +9,13 @@ import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
-import ChapterIntro from "@/components/ChapterIntro";
+import ChapterTransition from "@/components/ChapterTransition";
 import EditorialGallery from "@/components/EditorialGallery";
 import Hero from "@/components/Hero";
-import BottleCircle from "@/components/BottleCircle";
-import SoilCrossSection from "@/components/SoilCrossSection";
+import Millesime from "@/components/Millesime";
+import Degustation from "@/components/Degustation";
+import CalendrierVigneron from "@/components/CalendrierVigneron";
+import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
 import { photos } from "@/lib/images";
 
@@ -258,7 +260,7 @@ export default function Home() {
 
         <div id="after-hero" />
         {/* ═══════ INTERMISSION — chapter I year ═══════ */}
-        <ChapterIntro number="I" title="L'Origine" hint="Une famille, sept terroirs, trois siècles." variant="year" />
+        <ChapterTransition number="I" title="L'Origine" subtitle="UNE FAMILLE · SEPT TERROIRS · TROIS SIÈCLES" variant="flood" color="gold" />
 
         {/* ═══════ MANIFESTE 1710 ═══════ */}
         <section ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
@@ -287,7 +289,7 @@ export default function Home() {
         </section>
 
         {/* ═══════ INTERMISSION — chapter II ═══════ */}
-        <ChapterIntro number="II" title="Le Geste" hint="Dans le silence des chais, la matière prend forme." variant="rule" align="left" />
+        <ChapterTransition number="II" title="Le Geste" subtitle="DANS LE SILENCE DES CHAIS, LA MATIÈRE PREND FORME" variant="photo" image={photos.barrels} />
 
         {/* ═══════ CAVE ═══════ */}
         <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
@@ -329,7 +331,7 @@ export default function Home() {
         </div>
 
         {/* ═══════ INTERMISSION — chapter III ═══════ */}
-        <ChapterIntro number="III" title="La Bouteille" hint="L'instant figé d'un millésime rare." variant="year" />
+        <ChapterTransition number="III" title="La Bouteille" subtitle="L'INSTANT FIGÉ D'UN MILLÉSIME RARE" variant="flood" color="wine" />
 
         {/* ═══════ BOTTLE SHOWCASE — magnetic tilt ═══════ */}
         <section ref={bottleSec} className="h-screen flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
@@ -353,6 +355,9 @@ export default function Home() {
             <div className="font-serif text-[clamp(80px,11vw,180px)] font-light leading-none" style={{ color: "rgba(158,130,90,0.22)" }}>01</div>
           </div>
         </section>
+
+        {/* ═══════ MILLESIME spotlight ═══════ */}
+        <Millesime />
 
         {/* ═══════ Wine fill ═══════ */}
         <section ref={fillRef} className="py-20 md:py-24 px-8 md:px-16 relative overflow-hidden" style={{ background: "var(--warm)" }}>
@@ -402,6 +407,12 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ═══════ Calendrier du vigneron ═══════ */}
+        <CalendrierVigneron />
+
+        {/* ═══════ Dégustation ritual ═══════ */}
+        <Degustation />
+
         {/* ═══════ MOOD BOARD ═══════ */}
         <section className="py-16 md:py-24 px-4 md:px-8">
           <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-3 auto-rows-[160px] md:auto-rows-[200px]">
@@ -419,18 +430,15 @@ export default function Home() {
         </section>
 
         {/* ═══════ INTERMISSION — chapter IV ═══════ */}
-        <ChapterIntro number="IV" title="La Collection" hint="Quatre appellations, sept domaines." variant="rule" align="center" />
+        <ChapterTransition number="IV" title="La Collection" subtitle="QUATRE APPELLATIONS · SEPT DOMAINES" variant="scramble" />
 
         {/* ═══════ Editorial wine gallery (no cards, focused) ═══════ */}
         <EditorialGallery wines={wines} />
 
-        {/* ═══════ Bottle circle — bottles regroup into a rotating ring ═══════ */}
-        <BottleCircle wines={wines} />
-
         <MarqueeXXL reverse />
 
         {/* ═══════ INTERMISSION — chapter V ═══════ */}
-        <ChapterIntro number="V" title="L'Héritage" hint="Une lignée. Une promesse. Un futur." variant="year" />
+        <ChapterTransition number="V" title="L'Héritage" subtitle="UNE LIGNÉE · UNE PROMESSE · UN FUTUR" variant="photo" image={photos.cellar} />
 
         {/* ═══════ HÉRITAGE ═══════ */}
         <section ref={heritageSec} className="py-24 md:py-32 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
@@ -459,6 +467,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ═══════ Press / awards ═══════ */}
+        <Press />
 
         {/* ═══════ Photo break sunset ═══════ */}
         <div className="relative h-[40vh] md:h-[55vh] overflow-hidden">
@@ -496,8 +507,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <SoilCrossSection />
 
         <section className="py-20 px-8 md:px-16">
           <div className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
