@@ -39,7 +39,19 @@ export default function Nav() {
   }, [open]);
 
   const fg = dark ? "#F7F5F0" : "var(--ink)";
-  const links = ["La Maison", "Collection", "Terroirs", "Contact"];
+  const links = [
+    { label: "La Maison", target: "manifeste" },
+    { label: "Collection", target: "collection" },
+    { label: "Terroirs", target: "terroirs" },
+    { label: "Contact", target: "contact" },
+  ];
+
+  const goTo = (target: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    const el = document.getElementById(target);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <>
@@ -65,8 +77,15 @@ export default function Nav() {
 
         <div className="hidden md:flex items-center gap-8">
           {links.map(l => (
-            <a key={l} href="#" className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase opacity-70 hover:opacity-100 transition-opacity duration-300" data-hover style={{ color: fg }}>
-              {l}
+            <a
+              key={l.target}
+              href={`#${l.target}`}
+              onClick={goTo(l.target)}
+              className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase opacity-70 hover:opacity-100 transition-opacity duration-300"
+              data-hover
+              style={{ color: fg }}
+            >
+              {l.label}
             </a>
           ))}
         </div>
@@ -96,9 +115,9 @@ export default function Nav() {
       >
         {links.map((l, i) => (
           <a
-            key={l}
-            href="#"
-            onClick={() => setOpen(false)}
+            key={l.target}
+            href={`#${l.target}`}
+            onClick={goTo(l.target)}
             className="font-serif font-light tracking-[-1px]"
             style={{
               fontSize: "clamp(36px, 9vw, 56px)",
@@ -108,7 +127,7 @@ export default function Nav() {
               transition: `all 0.7s cubic-bezier(0.16,1,0.3,1) ${0.15 + i * 0.07}s`,
             }}
           >
-            {l}
+            {l.label}
           </a>
         ))}
         <div className="absolute bottom-12 font-mono text-[10px] tracking-[3px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>

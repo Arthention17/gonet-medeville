@@ -5,14 +5,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const critics = [
-  "ROBERT PARKER", "JANCIS ROBINSON", "DECANTER", "WINE SPECTATOR", "REVUE DU VIN", "BETTANE & DESSEAUVE", "GAULT & MILLAU", "LA RVF", "GUIDE HACHETTE",
+const facts = [
+  "MDCCX · ORIGINE", "PREIGNAC · SAUTERNAIS", "MESNIL-SUR-OGER · CHAMPAGNE", "MARGAUX · GRAVES", "20 ANS EN CUVES", "14 ANS SUR LATTES", "7 DOMAINES", "43 HECTARES", "VINIFICATION MAISON",
 ];
 
 const quotes = [
-  { stars: "97/100", body: "Une opulence rare, une précision hors du temps. Gilette défie toutes les lois du vieillissement.", who: "ROBERT PARKER · 2019" },
-  { stars: "★★★★★", body: "L'élégance d'une école française. Une signature de famille immédiatement reconnaissable au premier nez.", who: "DECANTER · 2022" },
-  { stars: "18.5/20", body: "Trois siècles de patience qui se libèrent dans le verre. Un vin de méditation absolue.", who: "JANCIS ROBINSON · 2021" },
+  { stars: "1710", body: "Plus de trois siècles de viticulture familiale à Preignac, sans interruption.", who: "PATRIMOINE FAMILIAL" },
+  { stars: "20 ans", body: "Château Gilette vieillit vingt ans en cuves béton avant mise en bouteille — une patience unique au monde.", who: "SIGNATURE GILETTE" },
+  { stars: "7 ⁄ 4", body: "Sept domaines, quatre appellations — de la craie champenoise aux graves bordelaises, sous une seule signature familiale.", who: "GONET-MEDEVILLE" },
 ];
 
 /**
@@ -53,12 +53,12 @@ export default function Press() {
 
   return (
     <section ref={root} className="relative py-24 md:py-32 overflow-hidden" style={{ background: "#0E0E0C", color: "#F7F5F0" }}>
-      {/* Critics marquee */}
+      {/* Facts marquee */}
       <div className="overflow-hidden border-y mb-16 md:mb-20" style={{ borderColor: "rgba(247,245,240,0.08)" }}>
         <div className="flex gap-12 whitespace-nowrap py-5 animate-marquee" style={{ width: "fit-content" }}>
           {[0, 1].map(j => (
             <div key={j} className="flex gap-12 items-center">
-              {critics.map((c, idx) => (
+              {facts.map((c, idx) => (
                 <span key={idx} className="font-mono text-[11px] tracking-[4px] flex items-center gap-12" style={{ color: "rgba(247,245,240,0.5)", fontFamily: "'DM Mono', monospace" }}>
                   {c}
                   <span className="text-[var(--gold)] opacity-80">◆</span>
@@ -70,7 +70,7 @@ export default function Press() {
       </div>
 
       <div className="max-w-[1100px] mx-auto px-8 md:px-16 text-center">
-        <div className="overflow-hidden mb-6"><span data-line className="inline-block font-mono text-[11px] tracking-[5px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>LA PRESSE EN PARLE</span></div>
+        <div className="overflow-hidden mb-6"><span data-line className="inline-block font-mono text-[11px] tracking-[5px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>CE QUI NOUS DÉFINIT</span></div>
 
         <div ref={quotesRef} className="relative h-[260px] md:h-[200px]">
           {quotes.map((q, i) => (

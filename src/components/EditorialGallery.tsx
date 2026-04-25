@@ -95,7 +95,7 @@ export default function EditorialGallery({ wines }: Props) {
           gsap.to(p, { opacity: focus * focus, duration: 0.5, ease: "power2.out", overwrite: "auto" });
         });
         if (ghost) {
-          gsap.to(ghost, { opacity: 0.08 + focus * 0.10, duration: 0.6, ease: "power2.out", overwrite: "auto" });
+          gsap.to(ghost, { opacity: 0.10 + focus * 0.12, duration: 0.6, ease: "power2.out", overwrite: "auto" });
         }
       });
 
@@ -150,7 +150,7 @@ export default function EditorialGallery({ wines }: Props) {
 
   if (isMobile) {
     return (
-      <section className="py-12 px-6" style={{ background: "var(--bg)" }}>
+      <section id="collection" className="py-12 px-6" style={{ background: "var(--bg)" }}>
         <div className="max-w-md mx-auto flex flex-col gap-12">
           {wines.map((wine, idx) => (
             <article key={wine.id} data-reveal className="flex flex-col items-center text-center" style={{ borderTop: idx === 0 ? "none" : "1px solid rgba(158,130,90,0.12)", paddingTop: idx === 0 ? 0 : "3rem" }}>
@@ -162,7 +162,7 @@ export default function EditorialGallery({ wines }: Props) {
               </h3>
               <p className="font-serif italic mt-3 mb-4 text-[14px]" style={{ color: "var(--ink2)" }}>{wine.subtitle} — {wine.year}</p>
               <p className="font-sans text-[13px] leading-[1.85] mb-5" style={{ color: "var(--ink2)" }}>{wine.description}</p>
-              <button className="btn-fill" data-hover><span>Découvrir</span></button>
+              <a href="https://www.gonet-medeville.com" target="_blank" rel="noopener noreferrer" className="btn-fill inline-block" data-hover><span>Découvrir</span></a>
             </article>
           ))}
         </div>
@@ -171,7 +171,7 @@ export default function EditorialGallery({ wines }: Props) {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-screen overflow-hidden" style={{ background: "var(--bg)" }}>
+    <section id="collection" ref={sectionRef} className="relative h-screen overflow-hidden" style={{ background: "var(--bg)" }}>
       {/* Accent-coloured tint that fades between wines */}
       <div ref={tintRef} aria-hidden className="absolute inset-0 pointer-events-none transition-[background] duration-700" />
 
@@ -247,13 +247,13 @@ export default function EditorialGallery({ wines }: Props) {
                   </div>
                 </div>
                 <div data-prose>
-                  <button className="btn-fill" data-hover data-cursor="open"><span>Découvrir</span></button>
+                  <a href="https://www.gonet-medeville.com" target="_blank" rel="noopener noreferrer" className="btn-fill inline-block" data-hover data-cursor="open"><span>Découvrir</span></a>
                 </div>
               </div>
             </div>
 
             {/* Year ghost — uses wine's accent colour */}
-            <div data-ghost className="absolute bottom-[8%] right-[6%] font-serif font-light leading-none pointer-events-none select-none" style={{ fontSize: "clamp(80px, 12vw, 200px)", color: wine.accent, opacity: 0.05 }}>
+            <div data-ghost className="absolute bottom-[8%] right-[6%] font-serif font-light leading-none pointer-events-none select-none" style={{ fontSize: "clamp(80px, 12vw, 200px)", color: wine.accent, opacity: 0.14 }}>
               {wine.year}
             </div>
           </div>

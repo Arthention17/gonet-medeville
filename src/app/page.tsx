@@ -203,7 +203,7 @@ export default function Home() {
         <div id="after-hero" />
 
         {/* ═══════ CHAPITRE I · L'ORIGINE — Manifeste 1710 ═══════ */}
-        <section ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
+        <section id="manifeste" ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
           <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-0">
             <div ref={manifesteImg} className="md:col-span-7 relative h-[55vh] md:h-screen overflow-hidden will-change-[clip-path,transform] photo-grade">
               <img src={photos.chateau} alt="Château de Preignac" className="w-full h-full object-cover" />
@@ -268,7 +268,7 @@ export default function Home() {
               <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>500 FÛTS DE CHÊNE</span>
               <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>14°C CONSTANT</span>
             </div>
-            <div data-line><button className="btn-fill" data-hover data-cursor="visit" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}><span>Visiter les chais</span></button></div>
+            <div data-line><button onClick={goToContact} className="btn-fill" data-hover data-cursor="visit" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}><span>Visiter les chais</span></button></div>
           </div>
         </section>
 
@@ -407,7 +407,7 @@ export default function Home() {
         </div>
 
         {/* ═══════ TERROIRS ═══════ */}
-        <section className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
+        <section id="terroirs" className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row gap-14 md:gap-24">
             <div className="flex-1" data-reveal>
               <span className="font-mono text-[11px] tracking-[3px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>NOS TERROIRS</span>
@@ -437,7 +437,7 @@ export default function Home() {
         </section>
 
         {/* ═══════ CONTACT / CTA — full-bleed vineyard ═══════ */}
-        <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <section id="contact" className="relative h-[80vh] flex items-center justify-center overflow-hidden">
           <img src={photos.vineyard1} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)" }} />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.4) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.55) 100%)" }} />
           <div className="relative z-10 text-center max-w-[640px] px-8" style={{ color: "#F7F5F0" }}>
@@ -493,6 +493,12 @@ export default function Home() {
       </main>
     </>
   );
+}
+
+function goToContact(e: React.MouseEvent) {
+  e.preventDefault();
+  const el = document.getElementById("contact");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function Stat({ n, l }: { n: string; l: string }) {

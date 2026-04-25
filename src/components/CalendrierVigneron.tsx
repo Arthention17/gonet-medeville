@@ -16,12 +16,12 @@ const months = [
 ];
 
 const monthImages = [
-  photos.vineyard1,    // JAN
-  photos.rows,         // MAR
-  photos.grapes,       // MAI
-  photos.grapes2,      // JUL
-  photos.barrels,      // SEP
-  photos.cellar,       // NOV
+  photos.sunset,       // JAN — winter chapelle / cold landscape
+  photos.rows,         // MAR — bare vines awakening
+  photos.vineyard2,    // MAI — flowering panorama
+  photos.grapes2,      // JUL — véraison, grain colour shift
+  photos.grapes,       // SEP — harvest hands
+  photos.cellar,       // NOV — rest, cellar
 ];
 
 /**
@@ -45,7 +45,7 @@ export default function CalendrierVigneron() {
   }, []);
 
   return (
-    <section ref={root} className="relative py-24 md:py-32 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
+    <section ref={root} className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div>
@@ -81,6 +81,8 @@ export default function CalendrierVigneron() {
           ))}
         </div>
       </div>
+      {/* Smooth fade into the next section's cream bg */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--bg))" }} />
     </section>
   );
 }
