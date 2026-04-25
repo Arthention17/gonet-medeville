@@ -16,20 +16,18 @@ export default function Nav() {
       backdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "none",
       borderBottom: scrolled ? "1px solid rgba(158,130,90,0.08)" : "1px solid transparent",
     }}>
-      <a href="#" className="flex items-center gap-3 group" data-hover>
-        <img src="/photos/logo.png" alt="Gonet-Medeville" className="h-8 w-auto transition-opacity duration-300" style={{
-          filter: scrolled ? "none" : "invert(1) brightness(2)",
-          opacity: scrolled ? 0.8 : 0.9,
-        }} />
+      <a href="#" className="flex items-center gap-2.5 group" data-hover>
+        <img
+          src={scrolled ? "/photos/logo-dark.png" : "/photos/logo-white.png"}
+          alt="Gonet-Medeville"
+          className="h-9 w-auto object-contain transition-all duration-500"
+        />
       </a>
-
       <div className="hidden md:flex items-center gap-7">
         {["La Maison","Collection","Terroirs","Contact"].map(l => (
           <a key={l} href="#" className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase transition-colors duration-300" style={{
             color: scrolled ? "var(--ink2)" : "rgba(255,255,255,0.7)",
-          }} data-hover>
-            {l}
-          </a>
+          }} data-hover>{l}</a>
         ))}
       </div>
     </nav>
