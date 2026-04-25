@@ -57,7 +57,6 @@ export default function Home() {
 
   // Heritage
   const heritageSec = useRef<HTMLElement>(null);
-  const heritageImg = useRef<HTMLDivElement>(null);
 
   const heritage = [
     { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance des domaines de Gilette et des Justices au cœur du Sauternais — une histoire qui ne s'est jamais interrompue.", image: photos.chapelle },
@@ -123,15 +122,14 @@ export default function Home() {
         { clipPath: "circle(85% at 50% 50%)",
           scrollTrigger: { trigger: quoteSec.current, start: "top 55%", end: "center center", scrub: true } });
 
-      // Heritage — directional reveals + clip-path image swap
-      if (heritageSec.current && heritageImg.current) {
+      // Heritage — directional reveals for each row
+      if (heritageSec.current) {
         const rows = heritageSec.current.querySelectorAll<HTMLElement>("[data-heritage-row]");
-        const images = heritageImg.current.querySelectorAll<HTMLElement>("[data-heritage-img]");
-        rows.forEach((row, i) => {
+        rows.forEach((row) => {
           const yearEl = row.querySelector<HTMLElement>("[data-h-year]");
           const textEl = row.querySelector<HTMLElement>("[data-h-text]");
-          if (yearEl) gsap.set(yearEl, { x: -120, opacity: 0 });
-          if (textEl) gsap.set(textEl, { x: 80, opacity: 0 });
+          if (yearEl) gsap.set(yearEl, { x: -80, opacity: 0 });
+          if (textEl) gsap.set(textEl, { x: 60, opacity: 0 });
           gsap.to(yearEl, {
             x: 0, opacity: 1, duration: 1, ease: "power3.out",
             scrollTrigger: { trigger: row, start: "top 80%", once: true },
@@ -140,25 +138,7 @@ export default function Home() {
             x: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.18,
             scrollTrigger: { trigger: row, start: "top 80%", once: true },
           });
-          ScrollTrigger.create({
-            trigger: row, start: "top 65%", end: "bottom 35%",
-            onEnter: () => swap(i), onEnterBack: () => swap(i),
-          });
         });
-        gsap.set(images, { clipPath: "inset(0 100% 0 0)", opacity: 0 });
-        gsap.set(images[0], { clipPath: "inset(0 0% 0 0)", opacity: 1 });
-        function swap(idx: number) {
-          images.forEach((img, j) => {
-            if (j === idx) {
-              gsap.fromTo(img,
-                { clipPath: "inset(0 100% 0 0)", opacity: 1 },
-                { clipPath: "inset(0 0% 0 0)", opacity: 1, duration: 1, ease: "power3.out" }
-              );
-            } else {
-              gsap.to(img, { opacity: 0, duration: 0.6, ease: "power2.out" });
-            }
-          });
-        }
       }
 
       gsap.utils.toArray<HTMLElement>("[data-mood]").forEach((el, i) => {
@@ -389,9 +369,9 @@ export default function Home() {
         />
 
         {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Heritage timeline ═══════ */}
-        <section ref={heritageSec} className="py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
+        <section ref={heritageSec} className="py-20 md:py-28 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
           <div className="max-w-[1300px] mx-auto">
-            <div className="mb-14" data-reveal>
+            <div className="mb-16 md:mb-20" data-reveal>
               <span className="font-mono text-[11px] tracking-[3px] block mb-3" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
                 CHAPITRE IV — L&apos;HÉRITAGE
               </span>
@@ -399,27 +379,29 @@ export default function Home() {
                 Une lignée, <span className="italic" style={{ color: "var(--gold)" }}>une promesse</span>.
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
-              <div className="md:col-span-5 md:sticky md:top-24 self-start">
-                <div ref={heritageImg} className="relative w-full aspect-[4/5] overflow-hidden photo-grade">
-                  {heritage.map((h, i) => (
-                    <div key={h.year} data-heritage-img className="absolute inset-0" style={{ opacity: i === 0 ? 1 : 0 }}>
-                      <img src={h.image} alt={h.year} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.4) 0%, transparent 50%)" }} />
-                      <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/90" style={{ fontFamily: "'DM Mono', monospace" }}>{h.year}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
-              <div className="md:col-span-7 space-y-16 md:space-y-20">
-                {heritage.map((item, i) => (
-                  <div key={i} data-heritage-row className="flex items-start gap-6 md:gap-12">
-                    <span data-h-year className="font-serif text-[clamp(48px,7vw,110px)] font-light leading-none flex-shrink-0 tracking-[-2px] will-change-transform" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
-                    <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[480px] pt-2 md:pt-4 will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
+            <div className="flex flex-col gap-20 md:gap-28">
+              {heritage.map((item, i) => (
+                <div
+                  key={item.year}
+                  data-heritage-row
+                  className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14 items-center ${i % 2 === 1 ? "md:[direction:rtl]" : ""}`}
+                >
+                  {/* Image — propre à chaque date */}
+                  <div className={`relative overflow-hidden photo-grade aspect-[4/3] ${i % 2 === 1 ? "md:[direction:ltr]" : ""}`} data-reveal>
+                    <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out hover:scale-[1.05]" />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.4) 0%, transparent 50%)" }} />
+                    <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/90" style={{ fontFamily: "'DM Mono', monospace" }}>{item.year}</div>
                   </div>
-                ))}
-              </div>
+                  {/* Texte */}
+                  <div className={`flex items-start gap-6 md:gap-8 ${i % 2 === 1 ? "md:[direction:ltr]" : ""}`}>
+                    <span data-h-year className="font-serif text-[clamp(48px,6vw,90px)] font-light leading-none flex-shrink-0 tracking-[-2px] will-change-transform" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
+                    <div className="pt-2 md:pt-3">
+                      <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[440px] will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>

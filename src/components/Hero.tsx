@@ -121,22 +121,38 @@ const Hero = forwardRef<HTMLElement, Props>(function Hero({ heroImg, heroOverlay
 
       {/* Wordmark */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center px-8 text-center" style={{ color: "#F7F5F0" }}>
-        <div className="overflow-hidden mb-8" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
-          <span className="font-mono inline-block text-[11px] tracking-[6px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+        {/* Logo — grand, doré, emblématique */}
+        <div style={{ opacity: ready ? 1 : 0, transition: "opacity 1.2s ease 0.2s", transform: ready ? "scale(1)" : "scale(0.85)", transitionProperty: "opacity, transform" }}>
+          <img
+            src="/logo.png"
+            alt="Gonet-Medeville"
+            width={100}
+            height={100}
+            className="w-[72px] h-[72px] md:w-[100px] md:h-[100px] mx-auto mb-6"
+            style={{ filter: "invert(1) brightness(1.2) drop-shadow(0 4px 20px rgba(158,130,90,0.35))" }}
+          />
+        </div>
+
+        <div className="overflow-hidden mb-6" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease 0.5s" }}>
+          <span className="font-mono inline-block text-[10px] md:text-[11px] tracking-[8px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
             MDCCX &mdash; VIGNOBLES FAMILIAUX
           </span>
         </div>
 
         <div ref={titleRef} className="will-change-transform">
-          <h1 ref={lettersRef} className="font-serif font-light leading-[0.92] tracking-[-0.02em]">
-            <span className="block" style={{ fontSize: "clamp(48px, 7vw, 110px)" }}>{renderLetters("Gonet")}</span>
-            <span className="block italic mt-1" style={{ fontSize: "clamp(40px, 6vw, 90px)", color: "var(--gold)" }}>{renderLetters("Medeville")}</span>
+          <h1 ref={lettersRef} className="font-serif font-light leading-[0.90] tracking-[-0.03em]">
+            <span className="block" style={{ fontSize: "clamp(52px, 8vw, 130px)" }}>{renderLetters("Gonet")}</span>
+            <span className="block italic mt-1" style={{ fontSize: "clamp(44px, 7vw, 105px)", color: "var(--gold)" }}>{renderLetters("Medeville")}</span>
           </h1>
         </div>
 
-        <div className="w-12 h-[1px] mx-auto my-10" style={{ background: "var(--gold)", transform: ready ? "scaleX(1)" : "scaleX(0)", transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1) 1.5s" }} />
+        <div className="flex items-center gap-4 mx-auto my-8">
+          <div className="h-[1px] w-8 md:w-16" style={{ background: "var(--gold)", transform: ready ? "scaleX(1)" : "scaleX(0)", transformOrigin: "right", transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1) 1.5s" }} />
+          <div className="w-1.5 h-1.5 rotate-45" style={{ background: "var(--gold)", opacity: ready ? 1 : 0, transition: "opacity 0.6s ease 1.7s" }} />
+          <div className="h-[1px] w-8 md:w-16" style={{ background: "var(--gold)", transform: ready ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1) 1.5s" }} />
+        </div>
 
-        <p className="font-serif italic font-light leading-[1.55] max-w-[440px]" style={{ fontSize: "clamp(15px, 1.3vw, 19px)", color: "rgba(247,245,240,0.88)", opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.7s" }}>
+        <p className="font-serif italic font-light leading-[1.55] max-w-[480px]" style={{ fontSize: "clamp(15px, 1.4vw, 20px)", color: "rgba(247,245,240,0.90)", opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.7s" }}>
           Trois siècles de patience, de la craie champenoise<br />aux graves bordelaises.
         </p>
 
