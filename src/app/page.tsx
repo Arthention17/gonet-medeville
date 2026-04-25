@@ -16,7 +16,8 @@ import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
 
-const FEATURED_IDS = ["gilette", "champ-alouette", "eyrins", "respide", "athenais", "rose", "grande-ruelle", "theophile"];
+// Seulement 4 cuvées vedettes dans la galerie + CTA "et plus encore"
+const FEATURED_IDS = ["gilette", "champ-alouette", "monplaisir", "eyrins"];
 const featuredWines = FEATURED_IDS
   .map(id => wines.find(w => w.id === id))
   .filter((w): w is (typeof wines)[number] => Boolean(w));
@@ -295,14 +296,7 @@ export default function Home() {
         {/* ═══════ Au fil des saisons (calendrier) ═══════ */}
         <CalendrierVigneron />
 
-        <ChapterIntro
-          number="III"
-          title="La Collection"
-          hint="Quatre appellations, sept domaines. Chaque cuvée raconte son terroir."
-          variant="split"
-        />
-
-        {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery (8 vins vedettes) ═══════ */}
+        {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery (4 vins vedettes + CTA) ═══════ */}
         <EditorialGallery wines={featuredWines} />
 
         {/* ═══════ Wine fill + GLOBAL stats fused ═══════ */}
@@ -391,7 +385,7 @@ export default function Home() {
           number="IV"
           title="L'Héritage"
           hint="Une lignée. Une promesse. Un futur. Depuis 1710, la patience comme philosophie."
-          variant="curtain"
+          variant="wipe"
         />
 
         {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Heritage timeline ═══════ */}
@@ -472,7 +466,7 @@ export default function Home() {
 
         {/* ═══════ CONTACT / CTA — full-bleed vineyard ═══════ */}
         <section id="contact" className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-          <img src={photos.julieXavierPortrait} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)" }} />
+          <img src={photos.julieXavierPortrait} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)", objectPosition: "center 25%" }} />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.4) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.55) 100%)" }} />
           <div className="relative z-10 text-center max-w-[640px] px-8" style={{ color: "#F7F5F0" }}>
             <span className="font-mono text-[11px] tracking-[5px] mb-5 block" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>NOUS RENDRE VISITE</span>
