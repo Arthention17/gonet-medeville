@@ -111,8 +111,10 @@ const Hero = forwardRef<HTMLElement, Props>(function Hero({ heroImg, heroOverlay
         <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(0deg, var(--bg) 0%, rgba(247,245,240,0.0) 35%)" }} />
         {/* Side fades */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(90deg, var(--bg) 0%, rgba(247,245,240,0.0) 10%, rgba(247,245,240,0.0) 90%, var(--bg) 100%)" }} />
-        {/* Centre legibility — slight darken under the wordmark */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 55%, rgba(14,14,12,0.45) 0%, rgba(14,14,12,0.18) 35%, rgba(14,14,12,0.0) 65%)" }} />
+        {/* Global scrim — uniform light darken so white type stays legible everywhere */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(14,14,12,0.18)" }} />
+        {/* Centre legibility — stronger radial vignette under the wordmark */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(14,14,12,0.58) 0%, rgba(14,14,12,0.35) 40%, rgba(14,14,12,0.0) 70%)" }} />
         {/* Scroll-driven darken for transition out */}
         <div ref={heroOverlay} className="absolute inset-0 pointer-events-none opacity-0" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(14,14,12,0.55) 100%)" }} />
       </div>

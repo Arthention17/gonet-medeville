@@ -5,14 +5,20 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const facts = [
-  "MDCCX · ORIGINE", "PREIGNAC · SAUTERNAIS", "MESNIL-SUR-OGER · CHAMPAGNE", "MARGAUX · GRAVES", "20 ANS EN CUVES", "14 ANS SUR LATTES", "7 DOMAINES", "43 HECTARES", "VINIFICATION MAISON",
+const critics = [
+  "CHÂTEAU GILETTE",
+  "CHAMPAGNE GONET-MEDEVILLE",
+  "CHÂTEAU DES EYRINS",
+  "CHÂTEAU RESPIDE-MEDEVILLE",
+  "DOMAINE DES JUSTICES",
+  "LES JUSTICES",
+  "CRU MONPLAISIR",
 ];
 
 const quotes = [
-  { stars: "1710", body: "Plus de trois siècles de viticulture familiale à Preignac, sans interruption.", who: "PATRIMOINE FAMILIAL" },
+  { stars: "1710", body: "Plus de trois siècles de viticulture familiale à Preignac, au cœur de l'appellation Sauternes.", who: "PATRIMOINE FAMILIAL" },
   { stars: "20 ans", body: "Château Gilette vieillit vingt ans en cuves béton avant mise en bouteille — une patience unique au monde.", who: "SIGNATURE GILETTE" },
-  { stars: "7 ⁄ 4", body: "Sept domaines, quatre appellations — de la craie champenoise aux graves bordelaises, sous une seule signature familiale.", who: "GONET-MEDEVILLE" },
+  { stars: "7", body: "Sept domaines, quatre appellations. De la craie champenoise aux graves bordelaises, un seul nom.", who: "DOMAINES GONET-MEDEVILLE" },
 ];
 
 /**
@@ -53,12 +59,12 @@ export default function Press() {
 
   return (
     <section ref={root} className="relative py-24 md:py-32 overflow-hidden" style={{ background: "#0E0E0C", color: "#F7F5F0" }}>
-      {/* Facts marquee */}
+      {/* Domains marquee */}
       <div className="overflow-hidden border-y mb-16 md:mb-20" style={{ borderColor: "rgba(247,245,240,0.08)" }}>
         <div className="flex gap-12 whitespace-nowrap py-5 animate-marquee" style={{ width: "fit-content" }}>
           {[0, 1].map(j => (
             <div key={j} className="flex gap-12 items-center">
-              {facts.map((c, idx) => (
+              {critics.map((c, idx) => (
                 <span key={idx} className="font-mono text-[11px] tracking-[4px] flex items-center gap-12" style={{ color: "rgba(247,245,240,0.5)", fontFamily: "'DM Mono', monospace" }}>
                   {c}
                   <span className="text-[var(--gold)] opacity-80">◆</span>

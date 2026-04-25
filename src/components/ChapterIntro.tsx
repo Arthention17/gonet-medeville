@@ -117,25 +117,25 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
       if (numRef.current) gsap.set(numRef.current, { opacity: 0 });
       if (titleRef.current) gsap.set(titleRef.current, { opacity: 0 });
 
-      // Pin while the split tears open
+      // Pin while the split tears open — shorter, faster
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: r,
           start: "top top",
-          end: "+=100%",
+          end: "+=60%",
           pin: true,
           scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
-      tl.to(numRef.current, { opacity: 0.15, duration: 0.3 }, 0)
-        .to(splitL.current, { xPercent: -55, duration: 0.7, ease: "power2.inOut" }, 0.1)
-        .to(splitR.current, { xPercent: 55, duration: 0.7, ease: "power2.inOut" }, 0.1)
-        .to(labelRef.current, { yPercent: 0, opacity: 1, duration: 0.5 }, 0.45)
-        .to(titleRef.current, { opacity: 1, duration: 0.4 }, 0.55)
-        .to(words, { yPercent: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: "power3.out" }, 0.6)
-        .to(hintRef.current, { y: 0, opacity: 1, duration: 0.5 }, 0.85);
+      tl.to(numRef.current, { opacity: 0.15, duration: 0.2 }, 0)
+        .to(splitL.current, { xPercent: -55, duration: 0.5, ease: "power2.inOut" }, 0)
+        .to(splitR.current, { xPercent: 55, duration: 0.5, ease: "power2.inOut" }, 0)
+        .to(labelRef.current, { yPercent: 0, opacity: 1, duration: 0.4 }, 0.25)
+        .to(titleRef.current, { opacity: 1, duration: 0.3 }, 0.35)
+        .to(words, { yPercent: 0, opacity: 1, stagger: 0.06, duration: 0.4, ease: "power3.out" }, 0.4)
+        .to(hintRef.current, { y: 0, opacity: 1, duration: 0.4 }, 0.6);
       triggers.push(tl.scrollTrigger!);
     }
 
@@ -143,25 +143,24 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
       if (curtain.current) gsap.set(curtain.current, { yPercent: -100 });
       if (numRef.current) gsap.set(numRef.current, { y: 30, opacity: 0 });
 
-      // Curtain drops, holds, lifts — pinned ~120%
+      // Curtain drops, holds, lifts — shorter pin
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: r,
           start: "top top",
-          end: "+=120%",
+          end: "+=70%",
           pin: true,
           scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
-      tl.to(curtain.current, { yPercent: 0, duration: 0.35, ease: "power3.in" }, 0)
-        .to(labelRef.current, { yPercent: 0, opacity: 1, duration: 0.3 }, 0.4)
-        .to(numRef.current, { y: 0, opacity: 0.18, duration: 0.5, ease: "power3.out" }, 0.45)
-        .to(words, { yPercent: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: "power3.out" }, 0.55)
-        .to(hintRef.current, { y: 0, opacity: 1, duration: 0.5 }, 0.7)
-        .to({}, { duration: 0.3 }, 0.85)
-        .to(curtain.current, { yPercent: 100, duration: 0.3, ease: "power3.out" }, 1.15);
+      tl.to(curtain.current, { yPercent: 0, duration: 0.3, ease: "power3.in" }, 0)
+        .to(labelRef.current, { yPercent: 0, opacity: 1, duration: 0.25 }, 0.3)
+        .to(numRef.current, { y: 0, opacity: 0.18, duration: 0.4, ease: "power3.out" }, 0.35)
+        .to(words, { yPercent: 0, opacity: 1, stagger: 0.06, duration: 0.4, ease: "power3.out" }, 0.45)
+        .to(hintRef.current, { y: 0, opacity: 1, duration: 0.4 }, 0.6)
+        .to(curtain.current, { yPercent: 100, duration: 0.25, ease: "power3.out" }, 0.85);
       triggers.push(tl.scrollTrigger!);
     }
 
@@ -184,13 +183,13 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
         <div ref={inkBg} aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: "#0E0E0C" }} />
       )}
 
-      {/* Curtain panel */}
+      {/* Curtain panel — solid ink, smoother bridge between dark Press and cream Heritage */}
       {variant === "curtain" && (
         <div
           ref={curtain}
           aria-hidden
           className="absolute inset-0 pointer-events-none z-[2] will-change-transform"
-          style={{ background: "linear-gradient(180deg, #0E0E0C 0%, #1a0a14 100%)" }}
+          style={{ background: "var(--ink)" }}
         />
       )}
 
@@ -247,7 +246,7 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
             style={{
               fontSize: "11px",
               letterSpacing: "5px",
-              color: variant === "reveal" || variant === "curtain" ? "var(--gold)" : "var(--gold)",
+              color: "var(--gold)",
               fontFamily: "'DM Mono', monospace",
             }}
           >
@@ -260,7 +259,7 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
           className="font-serif font-light tracking-[-1px] mb-5"
           style={{
             fontSize: "clamp(34px, 4.5vw, 64px)",
-            color: variant === "reveal" || variant === "curtain" ? "#F7F5F0" : "var(--ink)",
+            color: variant === "reveal" ? "#F7F5F0" : "var(--ink)",
             lineHeight: 1.05,
           }}
         >
@@ -272,7 +271,7 @@ export default function ChapterIntro({ number, title, hint, variant }: Props) {
           className="font-serif italic"
           style={{
             fontSize: "15px",
-            color: variant === "reveal" || variant === "curtain" ? "rgba(247,245,240,0.7)" : "var(--ink2)",
+            color: variant === "reveal" ? "rgba(247,245,240,0.7)" : "var(--ink2)",
             lineHeight: 1.6,
             maxWidth: "440px",
           }}

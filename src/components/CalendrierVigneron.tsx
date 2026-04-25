@@ -45,7 +45,7 @@ export default function CalendrierVigneron() {
   }, []);
 
   return (
-    <section ref={root} className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
+    <section ref={root} className="relative pt-20 pb-12 md:pt-24 md:pb-16 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div>

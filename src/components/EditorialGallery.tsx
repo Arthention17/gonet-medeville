@@ -124,7 +124,7 @@ export default function EditorialGallery({ wines }: Props) {
       scrollTrigger: {
         trigger: sec,
         start: "top top",
-        end: () => `+=${totalShift * 1.6}`,
+        end: () => `+=${totalShift * 1.2}`,
         pin: true,
         scrub: true,
         anticipatePin: 1,
@@ -266,6 +266,13 @@ export default function EditorialGallery({ wines }: Props) {
           <div key={i} data-dot className="h-[2px] rounded-full" style={{ width: 24, background: "rgba(158,130,90,0.25)" }} />
         ))}
       </div>
+
+      {/* Bottom transition into the next section's warm bg */}
+      <div
+        aria-hidden
+        className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-30"
+        style={{ background: "linear-gradient(to bottom, transparent, var(--warm))" }}
+      />
     </section>
   );
 }
