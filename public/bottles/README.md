@@ -3,9 +3,9 @@
 Place your bottle PNG images here with transparent backgrounds:
 
 - `gilette.png` — Château Gilette (Sauternes)
-- `champagne.png` — Champagne Gonet-Médeville
+- `champagne.png` — Champagne Gonet-Medeville
 - `eyrins.png` — Château des Eyrins (Margaux)
-- `respide.png` — Château Respide-Médeville (Graves)
+- `respide.png` — Château Respide-Medeville (Graves)
 
 ## How to get them:
 

@@ -44,7 +44,7 @@ export default function Nav() {
       <a href="#" className="flex items-center gap-3 group" data-hover>
         <img
           src="/logo.png"
-          alt="Gonet-Médeville"
+          alt="Gonet-Medeville"
           className="w-9 h-9 md:w-11 md:h-11 transition-all duration-500"
           style={{
             filter: dark
@@ -54,7 +54,7 @@ export default function Nav() {
         />
         <span className="hidden sm:flex items-baseline gap-1.5">
           <span className="font-serif text-[15px] tracking-[2px] font-medium">Gonet</span>
-          <span className="font-serif text-[15px] tracking-[2px] font-light italic text-[var(--gold)]">Médeville</span>
+          <span className="font-serif text-[15px] tracking-[2px] font-light italic text-[var(--gold)]">Medeville</span>
         </span>
       </a>
 

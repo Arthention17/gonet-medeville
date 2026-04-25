@@ -9,11 +9,12 @@ import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
+import ChapterIntro from "@/components/ChapterIntro";
+import EditorialGallery from "@/components/EditorialGallery";
 import { wines } from "@/lib/wines";
 import { photos } from "@/lib/images";
 
 const BubbleField = dynamic(() => import("@/components/BubbleField"), { ssr: false });
-const ClinkScene = dynamic(() => import("@/components/ClinkScene"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -48,10 +49,6 @@ export default function Home() {
   const quoteSec = useRef<HTMLDivElement>(null);
   const quoteBg = useRef<HTMLDivElement>(null);
 
-  // Gallery
-  const gallerySec = useRef<HTMLDivElement>(null);
-  const galleryTrack = useRef<HTMLDivElement>(null);
-
   // Wine fill
   const fillRef = useRef<HTMLDivElement>(null);
   const fillLevel = useRef<HTMLDivElement>(null);
@@ -60,10 +57,14 @@ export default function Home() {
   const heritageSec = useRef<HTMLElement>(null);
   const heritageImg = useRef<HTMLDivElement>(null);
 
+  // Liquid pour transition
+  const pourSec = useRef<HTMLDivElement>(null);
+  const pourLiquid = useRef<HTMLDivElement>(null);
+
   const heritage = [
     { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance de Gilette et Les Justices au cœur du Sauternais.", image: photos.chateau },
-    { year: "1930", text: "René Médeville découvre le vieillissement long en cuves béton — la signature unique de Gilette.", image: photos.xavierFuts },
-    { year: "2000", text: "Xavier Gonet et Julie Médeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Médeville.", image: photos.julieXavierCuves },
+    { year: "1930", text: "René Medeville découvre le vieillissement long en cuves béton — la signature unique de Gilette.", image: photos.xavierFuts },
+    { year: "2000", text: "Xavier Gonet et Julie Medeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Medeville.", image: photos.julieXavierCuves },
     { year: "2009", text: "Acquisition du Château des Eyrins — 3 hectares entourés par les vignes de Château Margaux.", image: photos.vineyard1 },
   ];
 
@@ -71,7 +72,6 @@ export default function Home() {
     if (!ready) return;
     const mm = gsap.matchMedia();
 
-    // Bottle magnetic tilt — works on all sizes
     if (bottleWrap.current && bottleImg.current) {
       const wrap = bottleWrap.current;
       const img = bottleImg.current;
@@ -79,7 +79,7 @@ export default function Home() {
         const r = wrap.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(img, { rotateY: x * 18, rotateX: -y * 12, x: x * 30, y: y * 18, duration: 0.9, ease: "power3.out" });
+        gsap.to(img, { rotateY: x * 14, rotateX: -y * 9, x: x * 22, y: y * 14, duration: 1, ease: "power3.out" });
       };
       const onLeave = () => gsap.to(img, { rotateY: 0, rotateX: 0, x: 0, y: 0, duration: 1.4, ease: "power3.out" });
       wrap.addEventListener("mousemove", onMove);
@@ -95,48 +95,51 @@ export default function Home() {
         });
       });
 
-      // Hero parallax + Ken Burns
+      // Hero parallax
       if (heroSec.current && heroImg.current && heroOverlay.current) {
-        gsap.to(heroImg.current, { scale: 1.22, y: "10%", ease: "none",
-          scrollTrigger: { trigger: heroSec.current, start: "top top", end: "bottom top", scrub: 1 } });
+        gsap.to(heroImg.current, { scale: 1.18, y: "8%", ease: "none",
+          scrollTrigger: { trigger: heroSec.current, start: "top top", end: "bottom top", scrub: true } });
         gsap.to(heroOverlay.current, { opacity: 1, ease: "none",
-          scrollTrigger: { trigger: heroSec.current, start: "top top", end: "bottom top", scrub: 1 } });
+          scrollTrigger: { trigger: heroSec.current, start: "top top", end: "bottom top", scrub: true } });
       }
 
-      // Manifeste pin — shorter, plays once on enter
+      // Manifeste pin
       if (manifesteSec.current && manifesteImg.current && manifesteText.current) {
-        gsap.set(manifesteImg.current, { clipPath: "inset(35% 25% 35% 25%)", scale: 1.25 });
+        gsap.set(manifesteImg.current, { clipPath: "inset(35% 25% 35% 25%)", scale: 1.2 });
         gsap.set(manifesteText.current.querySelectorAll("[data-line]"), { yPercent: 110, opacity: 0 });
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: manifesteSec.current, start: "top top", end: "+=80%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
+          scrollTrigger: { trigger: manifesteSec.current, start: "top top", end: "+=90%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
         });
-        tl.to(manifesteImg.current,
-          { clipPath: "inset(0% 0% 0% 0%)", scale: 1, ease: "power2.out", duration: 1.2 }
-        ).to(manifesteText.current.querySelectorAll("[data-line]"),
-          { yPercent: 0, opacity: 1, stagger: 0.12, ease: "power3.out", duration: 0.9 }, "-=0.6"
-        );
+        tl.to(manifesteImg.current, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, ease: "power2.out", duration: 1.2 })
+          .to(manifesteText.current.querySelectorAll("[data-line]"), { yPercent: 0, opacity: 1, stagger: 0.1, ease: "power3.out", duration: 0.9 }, "-=0.6");
       }
 
-      // Cave pin — shorter, scrub
+      // Cave pin
       if (caveSec.current && caveBg.current && caveCard.current && caveText.current) {
         gsap.set(caveBg.current, { clipPath: "inset(0% 0% 0% 0%)" });
         gsap.set(caveCard.current, { opacity: 0, x: 60, clipPath: "inset(100% 0% 0% 0%)" });
         gsap.set(caveText.current.querySelectorAll("[data-line]"), { y: 30, opacity: 0 });
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: caveSec.current, start: "top top", end: "+=110%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
+          scrollTrigger: { trigger: caveSec.current, start: "top top", end: "+=120%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
         });
-        tl.to(caveBg.current,
-          { clipPath: "inset(8% 50% 8% 8%)", ease: "power2.inOut", duration: 1.4 }
-        ).to(caveCard.current,
-          { opacity: 1, x: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power3.out" }, "-=1.0"
-        ).to(caveText.current.querySelectorAll("[data-line]"),
-          { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: "power2.out" }, "-=0.8"
-        );
+        tl.to(caveBg.current, { clipPath: "inset(8% 50% 8% 8%)", ease: "power2.inOut", duration: 1.4 })
+          .to(caveCard.current, { opacity: 1, x: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power3.out" }, "-=1.0")
+          .to(caveText.current.querySelectorAll("[data-line]"), { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: "power2.out" }, "-=0.8");
       }
 
-      // Bottle pin — slow & legible
+      // Pour transition — wine fills the screen, then recedes
+      if (pourSec.current && pourLiquid.current) {
+        gsap.set(pourLiquid.current, { yPercent: -100 });
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: pourSec.current, start: "top bottom", end: "bottom top", scrub: true }
+        });
+        tl.to(pourLiquid.current, { yPercent: 0, ease: "none", duration: 1 })
+          .to(pourLiquid.current, { yPercent: 100, ease: "none", duration: 1 });
+      }
+
+      // Bottle pin
       if (bottleSec.current) {
-        gsap.set(bottleImg.current, { scale: 0.55, opacity: 0, y: 80, rotateY: -15 });
+        gsap.set(bottleImg.current, { scale: 0.55, opacity: 0, y: 80, rotateY: -12 });
         gsap.set(bottleText.current, { opacity: 0, x: 50 });
         gsap.set(bottleNum.current, { opacity: 0, y: 20 });
         const btl = gsap.timeline({
@@ -154,42 +157,13 @@ export default function Home() {
       if (fillRef.current && fillLevel.current) {
         gsap.fromTo(fillLevel.current, { height: "0%" },
           { height: "70%", ease: "power1.inOut",
-            scrollTrigger: { trigger: fillRef.current, start: "top 60%", end: "bottom 40%", scrub: 1 } });
+            scrollTrigger: { trigger: fillRef.current, start: "top 60%", end: "bottom 40%", scrub: true } });
       }
 
       // Quote
       gsap.fromTo(quoteBg.current, { clipPath: "circle(0% at 50% 50%)" },
         { clipPath: "circle(85% at 50% 50%)",
-          scrollTrigger: { trigger: quoteSec.current, start: "top 55%", end: "center center", scrub: 1 } });
-
-      // Gallery — tight cards, snap, scale-focus on the active card
-      if (galleryTrack.current && gallerySec.current) {
-        const cards = galleryTrack.current.querySelectorAll<HTMLElement>("[data-card]");
-        const tw = galleryTrack.current.scrollWidth - window.innerWidth;
-        const updateFocus = () => {
-          const cx = window.innerWidth / 2;
-          cards.forEach((card) => {
-            const r = card.getBoundingClientRect();
-            const center = r.left + r.width / 2;
-            const dist = Math.abs(center - cx) / window.innerWidth;
-            const k = Math.max(0, 1 - dist * 1.6);
-            const scale = 0.78 + k * 0.22;
-            const opacity = 0.35 + k * 0.65;
-            gsap.set(card, { scale, opacity });
-          });
-        };
-        gsap.to(galleryTrack.current, {
-          x: -tw, ease: "none",
-          scrollTrigger: {
-            trigger: gallerySec.current, start: "top top", end: () => `+=${tw}`,
-            pin: true, scrub: 0.6, anticipatePin: 1,
-            snap: { snapTo: 1 / (wines.length - 1), duration: 0.55, ease: "power2.inOut" },
-            onUpdate: updateFocus,
-            onRefresh: updateFocus,
-          }
-        });
-        updateFocus();
-      }
+          scrollTrigger: { trigger: quoteSec.current, start: "top 55%", end: "center center", scrub: true } });
 
       // Heritage swap
       if (heritageSec.current && heritageImg.current) {
@@ -208,7 +182,6 @@ export default function Home() {
         }
       }
 
-      // Mood reveal
       gsap.utils.toArray<HTMLElement>("[data-mood]").forEach((el, i) => {
         gsap.fromTo(el, { opacity: 0, y: 60, scale: 0.93 },
           { opacity: 1, y: 0, scale: 1, duration: 0.9,
@@ -230,84 +203,63 @@ export default function Home() {
     return () => mm.revert();
   }, [ready]);
 
-  const L1 = "Gonet".split("");
-  const L2 = "Médeville".split("");
-
   return (
     <>
       <SmoothScroll />
       <CustomCursor />
       {!ready && <Preloader onComplete={onDone} />}
 
-      {/* Persistent WebGL background — bubbles + cursor orb */}
       <BubbleField />
 
       <main className="relative z-[1]" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.6s ease 0.3s" }}>
         <Nav />
 
-        {/* ═══════ HERO — massive type ═══════ */}
+        {/* ═══════ HERO — refined, cinematic but not overwhelming ═══════ */}
         <section ref={heroSec} className="h-screen relative overflow-hidden">
           <div ref={heroImg} className="absolute inset-0 will-change-transform photo-grade">
-            <img src={photos.hero} alt="Vignoble Gonet-Médeville" className="w-full h-full object-cover" style={{ transform: "scale(1.1)", animation: "kenBurns 22s ease-in-out infinite alternate" }} />
+            <img src={photos.hero} alt="" className="w-full h-full object-cover" style={{ animation: "kenBurns 26s ease-in-out infinite alternate" }} />
           </div>
+          {/* Cinematic overlay — darker bottom for legibility */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.25) 0%, rgba(14,14,12,0.0) 25%, rgba(14,14,12,0.55) 100%)" }} />
+          <div ref={heroOverlay} className="absolute inset-0 pointer-events-none opacity-0" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(14,14,12,0.4) 100%)" }} />
 
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.18) 0%, transparent 28%, rgba(14,14,12,0.65) 100%)" }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(120deg, rgba(247,245,240,0.45) 0%, rgba(247,245,240,0.1) 35%, transparent 60%)" }} />
-          {/* Falling dust particles */}
-          <div className="absolute inset-0 pointer-events-none dust-layer" />
-          <div ref={heroOverlay} className="absolute inset-0 pointer-events-none opacity-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.0) 0%, rgba(14,14,12,0.55) 100%)" }} />
-
-          {/* Eyebrow + scroll cue */}
-          <div className="absolute top-[28vh] left-[6%] z-10" style={{ opacity: ready ? 1 : 0, transform: ready ? "translateY(0)" : "translateY(12px)", transition: "all 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s" }}>
-            <span className="font-mono text-[11px] tracking-[2px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
-              Vignobles familiaux &mdash; Depuis MDCCX
-            </span>
-          </div>
-
-          {/* MASSIVE wordmark */}
-          <h1 className="absolute inset-0 flex flex-col justify-center font-serif font-light leading-[0.82] z-10 pointer-events-none px-[4%]">
-            <span className="block tracking-[-0.04em]" style={{ fontSize: "clamp(110px, 26vw, 420px)" }}>
-              {L1.map((c, i) => (
-                <span key={i} className="inline-block" style={{
-                  opacity: ready ? 1 : 0,
-                  transform: ready ? "translateY(0)" : "translateY(120%)",
-                  transition: `all 1s cubic-bezier(0.16,1,0.3,1) ${0.5 + i * 0.06}s`,
-                  color: "var(--ink)",
-                  textShadow: "0 4px 30px rgba(247,245,240,0.55)",
-                }}>{c}</span>
-              ))}
-            </span>
-            <span className="block italic tracking-[-0.02em] -mt-[2vw]" style={{ fontSize: "clamp(80px, 19vw, 320px)", color: "var(--gold)" }}>
-              {L2.map((c, i) => (
-                <span key={i} className="inline-block" style={{
-                  opacity: ready ? 1 : 0,
-                  transform: ready ? "translateY(0)" : "translateY(120%)",
-                  transition: `all 1s cubic-bezier(0.16,1,0.3,1) ${0.85 + i * 0.05}s`,
-                }}>{c}</span>
-              ))}
-            </span>
-          </h1>
-
-          <div className="absolute bottom-12 left-[6%] right-[6%] flex items-end justify-between z-10" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.6s" }}>
-            <div className="max-w-[360px]">
-              <p className="font-sans text-[13px] leading-[1.85]" style={{ color: "var(--ink2)" }}>
-                Sept domaines d&apos;exception. De la craie champenoise aux graves bordelaises, trois siècles d&apos;un savoir-faire transmis.
-              </p>
-              <button className="btn-fill mt-6" data-hover data-cursor="enter"><span>Découvrir</span></button>
+          {/* Centred wordmark — refined size, breathes */}
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-8 text-center" style={{ color: "#F7F5F0" }}>
+            <div className="overflow-hidden mb-8" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
+              <span className="font-mono inline-block text-[11px] tracking-[6px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+                MDCCX &mdash; VIGNOBLES FAMILIAUX
+              </span>
             </div>
-            <div className="hidden md:flex items-center gap-3">
-              <span className="font-mono text-[10px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>scroll</span>
-              <div className="w-[1px] h-12 relative overflow-hidden" style={{ background: "rgba(158,130,90,0.3)" }}>
-                <div className="w-full h-1/2 bg-[var(--gold)]" style={{ animation: "scrollLine 2.5s ease-in-out infinite" }} />
-              </div>
+
+            <h1 className="font-serif font-light leading-[0.92] tracking-[-0.02em]" style={{ opacity: ready ? 1 : 0, transform: ready ? "translateY(0)" : "translateY(28px)", transition: "all 1.2s cubic-bezier(0.16,1,0.3,1) 0.6s" }}>
+              <span className="block" style={{ fontSize: "clamp(48px, 7vw, 110px)" }}>Gonet</span>
+              <span className="block italic mt-1" style={{ fontSize: "clamp(40px, 6vw, 90px)", color: "var(--gold)" }}>Medeville</span>
+            </h1>
+
+            <div className="w-12 h-[1px] mx-auto my-10" style={{ background: "var(--gold)", transform: ready ? "scaleX(1)" : "scaleX(0)", transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1) 1.5s" }} />
+
+            <p className="font-serif italic font-light leading-[1.55] max-w-[440px]" style={{ fontSize: "clamp(15px, 1.3vw, 19px)", color: "rgba(247,245,240,0.85)", opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.7s" }}>
+              Trois siècles de patience, de la craie champenoise<br />aux graves bordelaises.
+            </p>
+
+            <div className="mt-10" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.9s" }}>
+              <button className="btn-fill" data-hover data-cursor="enter"><span>Découvrir</span></button>
+            </div>
+          </div>
+
+          {/* Scroll cue */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 2.1s" }}>
+            <span className="font-mono text-[9px] tracking-[3px]" style={{ color: "rgba(247,245,240,0.55)", fontFamily: "'DM Mono', monospace" }}>SCROLL</span>
+            <div className="w-[1px] h-10 relative overflow-hidden" style={{ background: "rgba(247,245,240,0.18)" }}>
+              <div className="w-full h-1/2 bg-[var(--gold)]" style={{ animation: "scrollLine 2.5s ease-in-out infinite" }} />
             </div>
           </div>
         </section>
 
-        {/* ═══════ MARQUEE XXL ═══════ */}
-        <MarqueeXXL />
+        {/* ═══════ INTERMISSION — chapter I year ═══════ */}
+        <ChapterIntro number="I" title="L'Origine" hint="Une famille, sept terroirs, trois siècles." variant="year" />
 
-        {/* ═══════ MANIFESTE 1710 (chap I — inline) ═══════ */}
+        {/* ═══════ MANIFESTE 1710 ═══════ */}
         <section ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
           <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-0">
             <div ref={manifesteImg} className="md:col-span-7 relative h-[55vh] md:h-screen overflow-hidden will-change-[clip-path,transform] photo-grade">
@@ -333,7 +285,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ CAVE (chap II — inline) ═══════ */}
+        {/* ═══════ INTERMISSION — chapter II ═══════ */}
+        <ChapterIntro number="II" title="Le Geste" hint="Dans le silence des chais, la matière prend forme." variant="rule" align="left" />
+
+        {/* ═══════ CAVE ═══════ */}
         <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
           <div ref={caveBg} className="absolute inset-0 will-change-[clip-path] photo-grade">
             <img src={photos.cellar} alt="Cave de Gilette" className="w-full h-full object-cover" />
@@ -341,9 +296,9 @@ export default function Home() {
           </div>
 
           <div ref={caveCard} className="absolute right-[6%] lg:right-[8%] top-1/2 -translate-y-1/2 w-[42%] lg:w-[36%] max-w-[480px] aspect-[3/4] overflow-hidden will-change-[clip-path,transform] photo-grade">
-            <img src={photos.julieCave} alt="Julie Médeville en cave" className="w-full h-full object-cover" />
+            <img src={photos.julieCave} alt="Julie Medeville en cave" className="w-full h-full object-cover" />
             <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, transparent 45%)" }} />
-            <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/85" style={{ fontFamily: "'DM Mono', monospace" }}>JULIE MÉDEVILLE</div>
+            <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/85" style={{ fontFamily: "'DM Mono', monospace" }}>JULIE MEDEVILLE</div>
           </div>
 
           <div ref={caveText} className="absolute left-[6%] lg:left-[10%] top-1/2 -translate-y-1/2 max-w-[440px] z-10" style={{ color: "#F7F5F0" }}>
@@ -359,10 +314,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ Photo break — high-quality only ═══════ */}
-        <div className="relative h-[60vh] md:h-[80vh] overflow-hidden">
-          <img src={photos.vineyard1} alt="" className="w-full h-full object-cover photo-grade" data-speed="-0.12" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, var(--bg) 0%, transparent 25%, transparent 75%, var(--bg) 100%)" }} />
+        {/* ═══════ INTERMISSION — Liquid pour transition ═══════ */}
+        <div ref={pourSec} className="relative h-[80vh] overflow-hidden" style={{ background: "var(--bg)" }}>
+          <img src={photos.vineyard1} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.1" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, var(--bg) 0%, rgba(247,245,240,0.05) 30%, rgba(247,245,240,0.05) 70%, var(--bg) 100%)" }} />
+          {/* The wine "pour" — a wine-coloured panel that scrolls down through the section */}
+          <div ref={pourLiquid} aria-hidden className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(91,26,46,0.0) 5%, #5b1a2e 35%, #2a0510 100%)", mixBlendMode: "multiply" }} />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <SplitText as="h3" by="word" className="font-serif text-white text-[clamp(38px,7vw,110px)] font-light italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.4)] text-center tracking-[-1.5px] leading-[0.95]">
               {"L'art\ndu temps."}
@@ -370,8 +327,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ═══════ Wine glass clink R3F (chap III — inline title in scene) ═══════ */}
-        <ClinkScene />
+        {/* ═══════ INTERMISSION — chapter III ═══════ */}
+        <ChapterIntro number="III" title="La Bouteille" hint="L'instant figé d'un millésime rare." variant="year" />
 
         {/* ═══════ BOTTLE SHOWCASE — magnetic tilt ═══════ */}
         <section ref={bottleSec} className="h-screen flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
@@ -418,7 +375,7 @@ export default function Home() {
                 Un art de la patience.
               </SplitText>
               <p className="font-sans text-[13px] leading-[2]" style={{ color: "var(--ink2)" }}>
-                Chez Gonet-Médeville, le temps est un allié. Château Gilette repose vingt ans en cuves béton avant sa mise en bouteille. Les Champagnes vieillissent quatorze ans sur lattes.
+                Chez Gonet-Medeville, le temps est un allié. Château Gilette repose vingt ans en cuves béton avant sa mise en bouteille. Les Champagnes vieillissent quatorze ans sur lattes.
               </p>
               <div className="mt-8 flex items-center gap-8">
                 <Stat n="20" l="ans en cuves" />
@@ -439,23 +396,19 @@ export default function Home() {
               <blockquote className="font-serif text-[clamp(22px,3.2vw,40px)] font-light italic leading-[1.55] tracking-[-0.5px]">
                 Nous créons des vins vivants, reflets de notre savoir-faire et de notre culture — du choix du plant au dégorgement.
               </blockquote>
-              <div className="mt-10 font-mono text-[10px] tracking-[2px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>JULIE &amp; XAVIER GONET-MÉDEVILLE</div>
+              <div className="mt-10 font-mono text-[10px] tracking-[2px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>JULIE &amp; XAVIER GONET-MEDEVILLE</div>
             </div>
           </div>
         </section>
 
-
-        {/* ═══════ MOOD BOARD — tiered by photo quality ═══════ */}
+        {/* ═══════ MOOD BOARD ═══════ */}
         <section className="py-16 md:py-24 px-4 md:px-8">
           <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-3 auto-rows-[160px] md:auto-rows-[200px]">
-            {/* HQ — large feature tiles */}
             <MoodTile mood src={photos.cellar} label="Les chais" caption="GILETTE 1989" className="col-span-2 row-span-2" big />
             <MoodTile mood src={photos.julieCave} label="Julie · cave" className="col-span-2 row-span-2" big />
             <MoodTile mood src={photos.barrels} label="Fûts · Xavier" className="row-span-2" />
             <MoodTile mood src={photos.cork} label="Bouchons" />
             <MoodTile mood src={photos.coffret} label="Coffret · Champagne" />
-
-            {/* MQ — medium */}
             <MoodTile mood src={photos.rows} label="Les rangs" caption="LE TERROIR" className="col-span-2" />
             <MoodTile mood src={photos.julieXavierCuves} label="Cuves béton" />
             <MoodTile mood src={photos.etiquette} label="Étiquette" />
@@ -464,84 +417,20 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ COLLECTION header ═══════ */}
-        <div className="px-8 md:px-16 lg:px-24 py-16 md:py-24">
-          <div className="flex items-end justify-between flex-wrap gap-6" data-reveal>
-            <div>
-              <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-4" style={{ fontFamily: "'DM Mono', monospace" }}>La collection</span>
-              <SplitText as="h2" by="char" className="font-serif text-[clamp(40px,6vw,80px)] font-light leading-none tracking-[-2px]">Nos vins</SplitText>
-            </div>
-            <p className="font-sans text-[13px] max-w-[300px] leading-[1.8]" style={{ color: "var(--ink2)" }}>
-              Quatre appellations, sept domaines — l&apos;empreinte d&apos;un terroir dans chaque bouteille.
-            </p>
-          </div>
-          <div className="w-full h-[1px] mt-8" style={{ background: "rgba(158,130,90,0.12)" }} />
-        </div>
+        {/* ═══════ INTERMISSION — chapter IV ═══════ */}
+        <ChapterIntro number="IV" title="La Collection" hint="Quatre appellations, sept domaines." variant="rule" align="center" />
 
-        {/* ═══════ Horizontal gallery — tight, focus-scaled cards ═══════ */}
-        <section ref={gallerySec} className="relative overflow-hidden h-screen" style={{ background: "var(--bg)" }}>
-          <div ref={galleryTrack} className="flex h-screen items-center" style={{ width: `${20 + wines.length * 62}vw`, paddingLeft: "20vw", paddingRight: "20vw" }}>
-            {wines.map((wine, idx) => (
-              <div
-                key={wine.id}
-                data-card
-                className="flex-shrink-0 h-[80vh] flex items-center justify-center mx-[1vw] rounded-[2px] relative"
-                style={{
-                  width: "60vw",
-                  background: "linear-gradient(180deg, var(--bg) 0%, var(--warm) 100%)",
-                  border: "1px solid rgba(158,130,90,0.12)",
-                  boxShadow: "0 30px 80px rgba(14,14,12,0.08)",
-                  transformOrigin: "center center",
-                  willChange: "transform, opacity",
-                }}
-              >
-                <div className="w-full h-full flex items-center px-[clamp(24px,4vw,72px)]">
-                  <div className="flex-shrink-0 relative" style={{ width: "32%" }}>
-                    <div style={{ filter: "drop-shadow(0 30px 60px rgba(14,14,12,0.25))" }}>
-                      <Image src={wine.image} alt={wine.name} width={220} height={580} className="object-contain select-none mx-auto" style={{ maxHeight: "62vh" }} />
-                    </div>
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[2px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{String(idx + 1).padStart(2, "0")} / 0{wines.length}</div>
-                  </div>
-                  <div className="flex-1 pl-[clamp(24px,3vw,56px)]">
-                    <span className="font-mono text-[10px] tracking-[2px] block mb-4" style={{ color: wine.accent, fontFamily: "'DM Mono', monospace" }}>{wine.appellation}</span>
-                    <h3 className="font-serif text-[clamp(30px,3.2vw,52px)] font-light leading-[1.05] mb-1 tracking-[-1px]">
-                      {wine.prefix !== "Champagne" && <span className="block text-[0.5em] font-normal opacity-70" style={{ color: "var(--ink2)" }}>{wine.prefix}</span>}
-                      {wine.name}
-                    </h3>
-                    <p className="font-serif text-[14px] italic mt-2 mb-6" style={{ color: "var(--ink2)" }}>{wine.subtitle} — {wine.year}</p>
-                    <p className="font-sans text-[13px] leading-[1.95] mb-8" style={{ color: "var(--ink2)", maxWidth: "32vw" }}>{wine.description}</p>
-                    <div className="flex gap-8 mb-8">
-                      <div><span className="font-mono text-[10px] block mb-1.5 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Cépages</span><span className="font-sans text-[12px]" style={{ color: "var(--ink2)" }}>{wine.blend}</span></div>
-                      <div><span className="font-mono text-[10px] block mb-1.5 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Vignoble</span><span className="font-sans text-[12px]" style={{ color: "var(--ink2)" }}>{wine.surface}</span></div>
-                    </div>
-                    <button className="btn-fill" data-hover data-cursor="open"><span>Découvrir</span></button>
-                  </div>
-                </div>
-                <div className="absolute bottom-[6%] right-[6%] font-serif text-[clamp(60px,9vw,140px)] font-light leading-none pointer-events-none select-none" style={{ color: "rgba(158,130,90,0.08)" }}>{wine.year}</div>
-              </div>
-            ))}
-          </div>
+        {/* ═══════ Editorial wine gallery (no cards, focused) ═══════ */}
+        <EditorialGallery wines={wines} />
 
-          {/* Progress / index indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
-            {wines.map((_, i) => (
-              <div key={i} className="w-8 h-[1px]" style={{ background: "rgba(158,130,90,0.3)" }} />
-            ))}
-          </div>
-        </section>
-
-        {/* ═══════ MARQUEE XXL bis ═══════ */}
         <MarqueeXXL reverse />
 
+        {/* ═══════ INTERMISSION — chapter V ═══════ */}
+        <ChapterIntro number="V" title="L'Héritage" hint="Une lignée. Une promesse. Un futur." variant="year" />
 
         {/* ═══════ HÉRITAGE ═══════ */}
-        <section ref={heritageSec} className="py-28 md:py-36 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
+        <section ref={heritageSec} className="py-24 md:py-32 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
           <div className="max-w-[1300px] mx-auto">
-            <div className="flex items-end gap-6 mb-16" data-reveal>
-              <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Héritage</span>
-              <div className="flex-1 h-[1px]" style={{ background: "rgba(158,130,90,0.15)" }} />
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
               <div className="md:col-span-5 md:sticky md:top-24 self-start">
                 <div ref={heritageImg} className="relative w-full aspect-[4/5] overflow-hidden photo-grade">
@@ -604,7 +493,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ CHIFFRES ═══════ */}
         <section className="py-24 px-8 md:px-16">
           <div className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
             {[{ n: "1710", l: "Fondation" }, { n: "7", l: "Domaines" }, { n: "43", l: "Hectares" }, { n: "~17k", l: "Caisses / an" }].map((s, i) => (
@@ -616,13 +504,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ FOOTER ═══════ */}
         <footer className="py-14 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row justify-between gap-10 mb-14">
             <div className="flex items-center gap-4">
-              <img src="/logo.png" alt="Gonet-Médeville" className="w-14 h-14" />
+              <img src="/logo.png" alt="Gonet-Medeville" className="w-14 h-14" />
               <div>
-                <div className="font-serif text-[22px] font-light">Gonet-Médeville</div>
+                <div className="font-serif text-[22px] font-light">Gonet-Medeville</div>
                 <p className="font-sans text-[11px] leading-relaxed" style={{ color: "var(--ink2)" }}>Vignobles familiaux — Bordeaux &amp; Champagne</p>
               </div>
             </div>
@@ -639,7 +526,7 @@ export default function Home() {
           </div>
           <div className="flex items-center justify-between pt-6" style={{ borderTop: "1px solid rgba(158,130,90,0.1)" }}>
             <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>L&apos;abus d&apos;alcool est dangereux pour la santé</span>
-            <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>© 2024 Gonet-Médeville</span>
+            <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>© 2024 Gonet-Medeville</span>
           </div>
         </footer>
       </main>
@@ -664,7 +551,7 @@ function MoodTile({ src, label, caption, className = "", mood, big }: { src: str
     <div {...(mood ? { "data-mood": "" } : {})} data-hover data-cursor="view" className={`relative overflow-hidden rounded photo-grade group ${className}`}>
       <img src={src} alt={label} className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.08]" />
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.6) 0%, transparent 60%)" }} />
-      <div className={`absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ${big ? "" : ""}`}>
+      <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
         <span className={`font-serif italic text-white leading-tight ${big ? "text-[18px]" : "text-[14px]"}`}>{label}</span>
         {caption && <span className="font-mono text-[9px] tracking-[2px] text-white/70" style={{ fontFamily: "'DM Mono', monospace" }}>{caption}</span>}
       </div>

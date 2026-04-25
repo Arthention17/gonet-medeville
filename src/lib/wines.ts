@@ -55,7 +55,7 @@ export const wines: Wine[] = [
   {
     id: "respide",
     prefix: "Château",
-    name: "Respide-Médeville",
+    name: "Respide-Medeville",
     appellation: "GRAVES",
     subtitle: "Blanc",
     year: "2021",
