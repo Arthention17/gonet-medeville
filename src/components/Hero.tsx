@@ -4,8 +4,8 @@ import { gsap } from "gsap";
 import { photos } from "@/lib/images";
 
 interface Props {
-  heroImg: React.RefObject<HTMLDivElement | null>;
-  heroOverlay: React.RefObject<HTMLDivElement | null>;
+  heroImg: React.RefObject<HTMLDivElement>;
+  heroOverlay: React.RefObject<HTMLDivElement>;
   ready: boolean;
 }
 
