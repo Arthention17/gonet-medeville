@@ -12,6 +12,7 @@ import EditorialGallery from "@/components/EditorialGallery";
 import Hero from "@/components/Hero";
 import ChapterIntro from "@/components/ChapterIntro";
 import Degustation from "@/components/Degustation";
+import GiletteShowcase from "@/components/GiletteShowcase";
 import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
@@ -110,59 +111,6 @@ export default function Home() {
           .to(caveText.current.querySelectorAll("[data-line]"), { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: "power2.out" }, "-=0.8");
       }
 
-      // ═══ Gilette showcase — choreographed pin ═══
-      const giletteSec = document.getElementById("gilette-showcase");
-      const giletteBottle = document.getElementById("gilette-bottle");
-      const giletteTextA = document.getElementById("gilette-textA");
-      const giletteTextB = document.getElementById("gilette-textB");
-      const giletteYear = document.getElementById("gilette-year");
-      const giletteGlow = document.getElementById("gilette-glow");
-      if (giletteSec && giletteBottle && giletteTextA && giletteTextB && giletteYear && giletteGlow) {
-        // État initial : bouteille au centre, zoom
-        gsap.set(giletteBottle, { xPercent: 0, yPercent: 0, scale: 1.2, rotation: 0 });
-        gsap.set(giletteTextA, { opacity: 0, x: -60 });
-        gsap.set(giletteTextB, { opacity: 0, x: 60 });
-        gsap.set(giletteYear, { opacity: 0, y: 30 });
-
-        const gtl = gsap.timeline({
-          scrollTrigger: {
-            trigger: giletteSec,
-            start: "top top",
-            end: "+=250%",
-            pin: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // Phase 1 (0→0.12) : bouteille au centre, zoom out — moment contemplatif
-        gtl.to(giletteBottle, { scale: 1.0, duration: 0.12, ease: "power2.out" }, 0)
-           .to(giletteYear, { opacity: 0.06, y: 0, duration: 0.12 }, 0)
-           .to(giletteGlow, { background: "radial-gradient(ellipse at 50% 50%, rgba(158,130,90,0.08) 0%, transparent 55%)", duration: 0.12 }, 0)
-
-        // Phase 2 (0.12→0.30) : bouteille glisse à DROITE + inclinaison, texte A à gauche
-           .to(giletteBottle, { xPercent: 30, rotation: 4, scale: 0.95, duration: 0.18, ease: "power2.inOut" }, 0.12)
-           .to(giletteTextA, { opacity: 1, x: 0, duration: 0.14, ease: "power3.out" }, 0.18)
-           .to(giletteYear, { opacity: 0, duration: 0.08 }, 0.12)
-
-        // Phase 3 (0.30→0.38) : pause lecture
-           .to({}, { duration: 0.08 }, 0.30)
-
-        // Phase 4 (0.38→0.52) : texte A disparaît, bouteille revient au centre droite
-           .to(giletteTextA, { opacity: 0, x: -40, duration: 0.10, ease: "power2.in" }, 0.38)
-           .to(giletteBottle, { xPercent: 0, rotation: 0, scale: 1.05, duration: 0.14, ease: "power2.inOut" }, 0.40)
-
-        // Phase 5 (0.52→0.70) : bouteille glisse à GAUCHE + inclinaison inverse, texte B à droite
-           .to(giletteBottle, { xPercent: -30, rotation: -4, scale: 0.95, duration: 0.18, ease: "power2.inOut" }, 0.52)
-           .to(giletteTextB, { opacity: 1, x: 0, duration: 0.14, ease: "power3.out" }, 0.58)
-           .to(giletteYear, { opacity: 0.08, y: 0, duration: 0.10 }, 0.55)
-           .to(giletteGlow, { background: "radial-gradient(ellipse at 35% 50%, rgba(158,130,90,0.10) 0%, transparent 55%)", duration: 0.14 }, 0.52)
-
-        // Phase 6 (0.70→1.0) : pause lecture longue
-           .to({}, { duration: 0.30 }, 0.70);
-      }
-
       // Wine fill
       if (fillRef.current && fillLevel.current) {
         gsap.fromTo(fillLevel.current, { height: "0%" },
@@ -224,6 +172,10 @@ export default function Home() {
         },
       });
     });
+
+    // Trier tous les pins dans l'ordre du DOM
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
 
     return () => mm.revert();
   }, [ready]);
@@ -327,53 +279,7 @@ export default function Home() {
         </section>
 
         {/* ═══════ GILETTE SHOWCASE — Chorégraphie bouteille au scroll ═══════ */}
-        <section id="gilette-showcase" className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
-          {/* Radial glow */}
-          <div id="gilette-glow" className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(158,130,90,0.04) 0%, transparent 55%)" }} />
-
-          {/* Bouteille — positionnée absolue au centre, animée par GSAP */}
-          <div id="gilette-bottle" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 will-change-transform">
-            <div className="relative">
-              <img src="/bottles/gilette.png" alt="Château Gilette" className="h-[55vh] md:h-[65vh] w-auto object-contain select-none" style={{ filter: "drop-shadow(0 40px 80px rgba(158,130,90,0.3))" }} />
-              <div className="absolute inset-0 -z-10 blur-[100px] opacity-25" style={{ background: "radial-gradient(ellipse, #9E825A, transparent 70%)" }} />
-            </div>
-          </div>
-
-          {/* Texte phase A — apparaît à GAUCHE quand la bouteille va à droite */}
-          <div id="gilette-textA" className="absolute left-[6%] lg:left-[10%] top-1/2 -translate-y-1/2 max-w-[400px] z-10" style={{ color: "#F7F5F0", opacity: 0 }}>
-            <span className="font-mono text-[10px] tracking-[5px] block mb-5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>LE VIN EMBLÉMATIQUE</span>
-            <h2 className="font-serif font-light leading-[1] tracking-[-2px] mb-3" style={{ fontSize: "clamp(38px, 4.5vw, 72px)" }}>Château</h2>
-            <h2 className="font-serif italic font-light leading-[1] tracking-[-2px] mb-6" style={{ fontSize: "clamp(46px, 5.5vw, 88px)", color: "var(--gold)" }}>Gilette</h2>
-            <p className="font-serif italic text-[15px]" style={{ color: "rgba(247,245,240,0.6)" }}>Crème de Tête · Sauternes</p>
-          </div>
-
-          {/* Texte phase B — apparaît à DROITE quand la bouteille va à gauche (showcase) */}
-          <div id="gilette-textB" className="absolute right-[6%] lg:right-[10%] top-1/2 -translate-y-1/2 max-w-[440px] z-10" style={{ color: "#F7F5F0", opacity: 0 }}>
-            <span className="font-mono text-[10px] tracking-[5px] block mb-5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>SAUTERNES · 1989</span>
-            <p className="font-sans text-[14px] leading-[2] mb-10" style={{ color: "rgba(247,245,240,0.6)" }}>
-              L&apos;antiquaire du Sauternes. Vieilli vingt ans en cuves béton centenaires avant sa mise en bouteille — une patience unique au monde. Seulement 5&nbsp;000 bouteilles par millésime.
-            </p>
-            <div className="flex gap-10">
-              <div>
-                <div data-counter="20" className="font-serif text-[32px] font-light" style={{ color: "var(--gold)" }}>0</div>
-                <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.4)", fontFamily: "'DM Mono', monospace" }}>ANS EN CUVES</span>
-              </div>
-              <div className="w-[1px] h-12" style={{ background: "rgba(158,130,90,0.2)" }} />
-              <div>
-                <div className="font-serif text-[32px] font-light" style={{ color: "var(--gold)" }}>5k</div>
-                <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.4)", fontFamily: "'DM Mono', monospace" }}>BOUTEILLES</span>
-              </div>
-              <div className="w-[1px] h-12" style={{ background: "rgba(158,130,90,0.2)" }} />
-              <div>
-                <div className="font-serif text-[32px] font-light" style={{ color: "var(--gold)" }}>90%</div>
-                <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.4)", fontFamily: "'DM Mono', monospace" }}>SÉMILLON</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Year ghost */}
-          <div id="gilette-year" className="absolute bottom-[8%] left-1/2 -translate-x-1/2 font-serif font-light italic leading-none pointer-events-none select-none" style={{ fontSize: "clamp(100px, 18vw, 280px)", color: "var(--gold)", opacity: 0 }}>1989</div>
-        </section>
+        <GiletteShowcase />
 
         {/* ═══════ Au fil des saisons (calendrier) ═══════ */}
         <CalendrierVigneron />

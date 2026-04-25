@@ -9,15 +9,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface Props { wines: Wine[]; }
 
-/**
- * Gallery v6 — GSAP pin + scrub. Pure GSAP, zero CSS sticky.
- * 
- * - Section is h-screen
- * - GSAP pins it (position: fixed internally — works with Lenis)
- * - Track translates horizontally via scrub
- * - When pin releases: timeline is at final state (CTA visible)
- * - Section scrolls away normally — no duplicate, no white screen
- */
 export default function EditorialGallery({ wines }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -74,9 +65,7 @@ export default function EditorialGallery({ wines }: Props) {
       });
     };
 
-    const tween = gsap.to(track, {
-      x: -totalShift,
-      ease: "none",
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sec,
         start: "top top",
@@ -85,14 +74,38 @@ export default function EditorialGallery({ wines }: Props) {
         scrub: 0.8,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        snap: { snapTo: 1 / (totalFrames - 1), duration: 0.6, delay: 0.1, ease: "power2.inOut" },
+        // FIX 5: snap avec delay plus long pour ne pas sauter le 1er vin
+        snap: {
+          snapTo: 1 / (totalFrames - 1),
+          duration: { min: 0.4, max: 0.8 },
+          delay: 0.15,
+          ease: "power2.inOut",
+          inertia: false, // empêche le momentum de sauter un snap
+        },
         onUpdate: updateFocus,
         onRefresh: updateFocus,
       },
     });
 
+    // FIX 4: colorer le spacer pour éliminer l'écran blanc
+    const pinSpacer = sec.parentElement;
+    if (pinSpacer && pinSpacer.classList.contains("pin-spacer")) {
+      pinSpacer.style.background = "var(--warm)";
+    }
+
+    // Le track se déplace horizontalement
+    tl.to(track, { x: -totalShift, ease: "none", duration: 1 }, 0);
+
+    // FIX 3: fade out à la toute fin pour éviter le doublon "nos cuvées" quand le pin release
+    tl.to(sec, { opacity: 0, duration: 0.08 }, 0.94);
+
     updateFocus();
-    return () => { tween.scrollTrigger?.kill(); tween.kill(); };
+
+    // FIX 1: trier les pins dans l'ordre du DOM
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+
+    return () => { tl.scrollTrigger?.kill(); tl.kill(); sec.style.opacity = "1"; };
   }, [wines, isMobile]);
 
   if (isMobile) {
