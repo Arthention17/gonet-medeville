@@ -9,7 +9,6 @@ import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
-import ChapterDivider from "@/components/ChapterDivider";
 import { wines } from "@/lib/wines";
 import { photos } from "@/lib/images";
 
@@ -308,10 +307,7 @@ export default function Home() {
         {/* ═══════ MARQUEE XXL ═══════ */}
         <MarqueeXXL />
 
-        {/* ═══════ CHAPITRE I ═══════ */}
-        <ChapterDivider number="I" title="L'Origine" subtitle="MDCCX — Une famille, sept terroirs, trois siècles." bg="ink" sweep="var(--gold)" />
-
-        {/* ═══════ MANIFESTE 1710 ═══════ */}
+        {/* ═══════ MANIFESTE 1710 (chap I — inline) ═══════ */}
         <section ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
           <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-0">
             <div ref={manifesteImg} className="md:col-span-7 relative h-[55vh] md:h-screen overflow-hidden will-change-[clip-path,transform] photo-grade">
@@ -337,10 +333,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ CHAPITRE II ═══════ */}
-        <ChapterDivider number="II" title="Le Geste" subtitle="Dans le silence des chais, la matière prend forme." bg="ink" sweep="#3a0d1c" />
-
-        {/* ═══════ CAVE ═══════ */}
+        {/* ═══════ CAVE (chap II — inline) ═══════ */}
         <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
           <div ref={caveBg} className="absolute inset-0 will-change-[clip-path] photo-grade">
             <img src={photos.cellar} alt="Cave de Gilette" className="w-full h-full object-cover" />
@@ -377,10 +370,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ═══════ CHAPITRE III ═══════ */}
-        <ChapterDivider number="III" title="Le Tchin" subtitle="Trois cents ans d'amitié, scellés à chaque verre." bg="ink" sweep="#5b1a2e" />
-
-        {/* ═══════ Wine glass clink R3F ═══════ */}
+        {/* ═══════ Wine glass clink R3F (chap III — inline title in scene) ═══════ */}
         <ClinkScene />
 
         {/* ═══════ BOTTLE SHOWCASE — magnetic tilt ═══════ */}
@@ -454,8 +444,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ CHAPITRE IV ═══════ */}
-        <ChapterDivider number="IV" title="La Collection" subtitle="Quatre appellations. Sept domaines." bg="cream" sweep="var(--gold)" />
 
         {/* ═══════ MOOD BOARD — tiered by photo quality ═══════ */}
         <section className="py-16 md:py-24 px-4 md:px-8">
@@ -545,8 +533,6 @@ export default function Home() {
         {/* ═══════ MARQUEE XXL bis ═══════ */}
         <MarqueeXXL reverse />
 
-        {/* ═══════ CHAPITRE V ═══════ */}
-        <ChapterDivider number="V" title="L'Héritage" subtitle="Une lignée. Une promesse. Un futur." bg="ink" sweep="var(--gold)" />
 
         {/* ═══════ HÉRITAGE ═══════ */}
         <section ref={heritageSec} className="py-28 md:py-36 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
