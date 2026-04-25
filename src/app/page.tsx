@@ -66,6 +66,8 @@ export default function Home() {
         const items = gsap.utils.toArray<HTMLElement>("[data-wine-slide]");
         const slideW = window.innerWidth * 0.7;
         const totalShift = (items.length - 1) * slideW;
+        const wineColors = ["rgba(212,160,23,0.06)", "rgba(201,169,110,0.05)", "rgba(139,38,53,0.05)", "rgba(107,127,94,0.05)"];
+        const tintEl = document.getElementById("gallery-tint");
 
         gsap.to(galleryTrack.current, { x: -totalShift, ease: "none",
           scrollTrigger: {
@@ -75,6 +77,8 @@ export default function Home() {
             snap: { snapTo: 1 / (items.length - 1), duration: 0.7, delay: 0.2, ease: "power3.inOut" },
             onUpdate: (self) => {
               const p = self.progress * (items.length - 1);
+              const activeIdx = Math.round(p);
+              if (tintEl) tintEl.style.background = `radial-gradient(ellipse at 50% 50%, ${wineColors[activeIdx] || wineColors[0]} 0%, transparent 70%)`;
               items.forEach((slide, i) => {
                 const dist = Math.abs(p - i);
                 const bottle = slide.querySelector("[data-slide-bottle]") as HTMLElement;
@@ -106,6 +110,17 @@ export default function Home() {
         gsap.fromTo(el, { opacity: 0, y: 50, scale: 0.94 },
           { opacity: 1, y: 0, scale: 1, duration: 0.7, scrollTrigger: { trigger: el, start: "top 92%" }, delay: (i % 4) * 0.06 });
       });
+
+      // ── BOTTLE CIRCLE ──
+      const circleSection = document.querySelector("[data-bottle-circle]");
+      if (circleSection) {
+        gsap.utils.toArray<HTMLElement>("[data-circle-bottle]").forEach((el, i) => {
+          gsap.fromTo(el, { opacity: 0, scale: 0.3 },
+            { opacity: 0.65, scale: 1, duration: 1.2, delay: i * 0.15, ease: "power2.out",
+              scrollTrigger: { trigger: circleSection, start: "top 60%" }
+            });
+        });
+      }
 
       gsap.utils.toArray<HTMLElement>("[data-heritage]").forEach(el => {
         gsap.fromTo(el, { opacity: 0, y: 40 },
@@ -343,7 +358,8 @@ export default function Home() {
 
         {/* ═══════ GALLERY — Seamless deck ═══════ */}
         <section ref={gallerySec} className="relative overflow-hidden">
-          <div ref={galleryTrack} className="flex h-screen items-center pl-[15vw] gap-[3vw]">
+          <div id="gallery-tint" className="absolute inset-0 pointer-events-none z-0 transition-[background] duration-700" />
+          <div ref={galleryTrack} className="flex h-screen items-center pl-[15vw] gap-[3vw] relative z-10">
             {wines.map((wine, idx) => (
               <div key={wine.id} data-wine-slide className="flex-shrink-0 w-[70vw] h-[80vh] flex items-center">
                 <div className="flex items-center gap-[clamp(24px,4vw,60px)] w-full">
@@ -370,6 +386,32 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ═══════ BOTTLE CIRCLE ═══════ */}
+        <section className="py-0">
+          <div data-bottle-circle className="h-screen flex items-center justify-center relative overflow-hidden" style={{ background: "var(--bg)" }}>
+            <div className="relative z-10 text-center max-w-[280px]">
+              <img src="/photos/logo.png" alt="" className="w-14 h-14 mx-auto mb-4 object-contain opacity-15" />
+              <div className="font-serif text-[clamp(22px,2.8vw,32px)] font-light leading-[1.2]">Sept domaines</div>
+              <div className="font-serif text-[clamp(16px,1.8vw,22px)] font-light italic text-[var(--gold)] mt-1">un heritage</div>
+              <div className="font-mono text-[9px] tracking-[2px] text-[var(--ink2)] mt-4" style={{ fontFamily: "'DM Mono', monospace" }}>DEPUIS 1710</div>
+            </div>
+            {wines.map((wine, idx) => {
+              const angle = (idx * 90) - 45;
+              return (
+                <div key={wine.id} data-circle-bottle={idx} className="absolute" style={{
+                  left: "50%", top: "50%",
+                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(280px) rotate(-${angle}deg)`,
+                  opacity: 0.65,
+                  filter: "drop-shadow(0 12px 24px rgba(14,14,12,0.1))",
+                }}>
+                  <Image src={wine.image} alt={wine.name} width={75} height={190} className="object-contain" style={{ maxHeight: "20vh" }} />
+                  <div className="text-center mt-1.5 font-mono text-[7px] tracking-[1px]" style={{ color: wine.accent, fontFamily: "'DM Mono', monospace" }}>{wine.name}</div>
+                </div>
+              );
+            })}
           </div>
         </section>
 

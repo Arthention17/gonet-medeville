@@ -11,19 +11,23 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] px-8 md:px-12 py-5 flex items-center justify-between transition-all duration-700" style={{
+    <nav className="fixed top-0 left-0 right-0 z-[100] px-6 md:px-12 py-4 flex items-center justify-between transition-all duration-700" style={{
       background: scrolled ? "rgba(247,245,240,0.92)" : "transparent",
       backdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "none",
       borderBottom: scrolled ? "1px solid rgba(158,130,90,0.08)" : "1px solid transparent",
     }}>
-      <a href="#" className="flex items-baseline gap-1 group" data-hover>
-        <span className="font-serif text-lg tracking-[2px] font-medium">Gonet</span>
-        <span className="font-serif text-lg tracking-[2px] font-light italic text-[var(--gold)]">Medeville</span>
+      <a href="#" className="flex items-center gap-3 group" data-hover>
+        <img src="/photos/logo.png" alt="Gonet-Medeville" className="h-8 w-auto transition-opacity duration-300" style={{
+          filter: scrolled ? "none" : "invert(1) brightness(2)",
+          opacity: scrolled ? 0.8 : 0.9,
+        }} />
       </a>
 
-      <div className="hidden md:flex items-center gap-8">
+      <div className="hidden md:flex items-center gap-7">
         {["La Maison","Collection","Terroirs","Contact"].map(l => (
-          <a key={l} href="#" className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--ink2)] hover:text-[var(--ink)] transition-colors duration-300" data-hover>
+          <a key={l} href="#" className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase transition-colors duration-300" style={{
+            color: scrolled ? "var(--ink2)" : "rgba(255,255,255,0.7)",
+          }} data-hover>
             {l}
           </a>
         ))}
