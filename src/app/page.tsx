@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -9,10 +8,8 @@ import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
-import ChapterTransition from "@/components/ChapterTransition";
 import EditorialGallery from "@/components/EditorialGallery";
 import Hero from "@/components/Hero";
-import Millesime from "@/components/Millesime";
 import Degustation from "@/components/Degustation";
 import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
@@ -43,13 +40,6 @@ export default function Home() {
   const caveCard = useRef<HTMLDivElement>(null);
   const caveText = useRef<HTMLDivElement>(null);
 
-  // Bottle showcase
-  const bottleSec = useRef<HTMLDivElement>(null);
-  const bottleWrap = useRef<HTMLDivElement>(null);
-  const bottleImg = useRef<HTMLDivElement>(null);
-  const bottleText = useRef<HTMLDivElement>(null);
-  const bottleNum = useRef<HTMLDivElement>(null);
-
   // Quote
   const quoteSec = useRef<HTMLDivElement>(null);
   const quoteBg = useRef<HTMLDivElement>(null);
@@ -62,34 +52,16 @@ export default function Home() {
   const heritageSec = useRef<HTMLElement>(null);
   const heritageImg = useRef<HTMLDivElement>(null);
 
-  // Liquid pour transition
-  const pourSec = useRef<HTMLDivElement>(null);
-  const pourLiquid = useRef<HTMLDivElement>(null);
-
   const heritage = [
-    { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance de Gilette et Les Justices au cœur du Sauternais.", image: photos.chateau },
-    { year: "1930", text: "René Medeville découvre le vieillissement long en cuves béton — la signature unique de Gilette.", image: photos.xavierFuts },
-    { year: "2000", text: "Xavier Gonet et Julie Medeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Medeville.", image: photos.julieXavierCuves },
-    { year: "2009", text: "Acquisition du Château des Eyrins — 3 hectares entourés par les vignes de Château Margaux.", image: photos.vineyard1 },
+    { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance des domaines de Gilette et des Justices au cœur du Sauternais — une histoire qui ne s'est jamais interrompue.", image: photos.chateau },
+    { year: "1930", text: "René Medeville découvre le vieillissement long en cuves béton — vingt années de patience pour révéler la quintessence d'un Sauternes. Cette signature unique forge la légende de Gilette.", image: photos.xavierFuts },
+    { year: "2000", text: "Xavier Gonet et Julie Medeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Medeville — pour la première fois, deux terroirs d'exception conjugués sous un même nom.", image: photos.julieXavierCuves },
+    { year: "2009", text: "Acquisition du Château des Eyrins — trois hectares cernés par les vignes du Premier Grand Cru Classé Château Margaux. Le micro-domaine entre dans la maison.", image: photos.vineyard1 },
   ];
 
   useEffect(() => {
     if (!ready) return;
     const mm = gsap.matchMedia();
-
-    if (bottleWrap.current && bottleImg.current) {
-      const wrap = bottleWrap.current;
-      const img = bottleImg.current;
-      const onMove = (e: MouseEvent) => {
-        const r = wrap.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(img, { rotateY: x * 14, rotateX: -y * 9, x: x * 22, y: y * 14, duration: 1, ease: "power3.out" });
-      };
-      const onLeave = () => gsap.to(img, { rotateY: 0, rotateX: 0, x: 0, y: 0, duration: 1.4, ease: "power3.out" });
-      wrap.addEventListener("mousemove", onMove);
-      wrap.addEventListener("mouseleave", onLeave);
-    }
 
     mm.add("(min-width: 768px)", () => {
       gsap.utils.toArray<HTMLElement>("[data-speed]").forEach(el => {
@@ -108,54 +80,28 @@ export default function Home() {
           scrollTrigger: { trigger: heroSec.current, start: "top top", end: "bottom top", scrub: true } });
       }
 
-      // Manifeste pin
+      // Manifeste pin — tighter
       if (manifesteSec.current && manifesteImg.current && manifesteText.current) {
         gsap.set(manifesteImg.current, { clipPath: "inset(35% 25% 35% 25%)", scale: 1.2 });
         gsap.set(manifesteText.current.querySelectorAll("[data-line]"), { yPercent: 110, opacity: 0 });
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: manifesteSec.current, start: "top top", end: "+=90%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
+          scrollTrigger: { trigger: manifesteSec.current, start: "top top", end: "+=70%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
         });
         tl.to(manifesteImg.current, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, ease: "power2.out", duration: 1.2 })
           .to(manifesteText.current.querySelectorAll("[data-line]"), { yPercent: 0, opacity: 1, stagger: 0.1, ease: "power3.out", duration: 0.9 }, "-=0.6");
       }
 
-      // Cave pin
+      // Cave pin — tighter
       if (caveSec.current && caveBg.current && caveCard.current && caveText.current) {
         gsap.set(caveBg.current, { clipPath: "inset(0% 0% 0% 0%)" });
         gsap.set(caveCard.current, { opacity: 0, x: 60, clipPath: "inset(100% 0% 0% 0%)" });
         gsap.set(caveText.current.querySelectorAll("[data-line]"), { y: 30, opacity: 0 });
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: caveSec.current, start: "top top", end: "+=120%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
+          scrollTrigger: { trigger: caveSec.current, start: "top top", end: "+=80%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
         });
         tl.to(caveBg.current, { clipPath: "inset(8% 50% 8% 8%)", ease: "power2.inOut", duration: 1.4 })
           .to(caveCard.current, { opacity: 1, x: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power3.out" }, "-=1.0")
           .to(caveText.current.querySelectorAll("[data-line]"), { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: "power2.out" }, "-=0.8");
-      }
-
-      // Pour transition — wine fills the screen, then recedes
-      if (pourSec.current && pourLiquid.current) {
-        gsap.set(pourLiquid.current, { yPercent: -100 });
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: pourSec.current, start: "top bottom", end: "bottom top", scrub: true }
-        });
-        tl.to(pourLiquid.current, { yPercent: 0, ease: "none", duration: 1 })
-          .to(pourLiquid.current, { yPercent: 100, ease: "none", duration: 1 });
-      }
-
-      // Bottle pin
-      if (bottleSec.current) {
-        gsap.set(bottleImg.current, { scale: 0.55, opacity: 0, y: 80, rotateY: -12 });
-        gsap.set(bottleText.current, { opacity: 0, x: 50 });
-        gsap.set(bottleNum.current, { opacity: 0, y: 20 });
-        const btl = gsap.timeline({
-          scrollTrigger: { trigger: bottleSec.current, start: "top top", end: "+=200%", pin: true, scrub: true, invalidateOnRefresh: true, anticipatePin: 1 }
-        });
-        btl
-          .to(bottleImg.current, { scale: 1, opacity: 1, y: 0, rotateY: 0, duration: 1.4, ease: "power2.out" })
-          .to(bottleImg.current, { x: "-25vw", scale: 0.85, duration: 1.6 }, "+=0.3")
-          .to(bottleText.current, { opacity: 1, x: 0, duration: 1.2 }, "<0.4")
-          .to(bottleNum.current, { opacity: 0.22, y: 0, duration: 0.9 }, "<0.4")
-          .to({}, { duration: 1.4 });
       }
 
       // Wine fill
@@ -214,8 +160,6 @@ export default function Home() {
             scrollTrigger: { trigger: el, start: "top 88%" },
             delay: (i % 4) * 0.06 });
       });
-
-      // (heritage rows now use directional reveals — see Heritage block above)
     });
 
     gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el => {
@@ -223,7 +167,7 @@ export default function Home() {
         { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: el, start: "top 86%" } });
     });
 
-    // Animated counters — count from 0 to target value when entering view
+    // Animated counters
     gsap.utils.toArray<HTMLElement>("[data-counter]").forEach(el => {
       const raw = el.getAttribute("data-counter") || "0";
       const num = parseFloat(raw.replace(/[^\d.]/g, ""));
@@ -256,13 +200,9 @@ export default function Home() {
         <Nav />
 
         <Hero ref={heroSec} heroImg={heroImg} heroOverlay={heroOverlay} ready={ready} />
-
-
         <div id="after-hero" />
-        {/* ═══════ INTERMISSION — chapter I year ═══════ */}
-        <ChapterTransition number="I" title="L'Origine" subtitle="UNE FAMILLE · SEPT TERROIRS · TROIS SIÈCLES" variant="flood" color="gold" />
 
-        {/* ═══════ MANIFESTE 1710 ═══════ */}
+        {/* ═══════ CHAPITRE I · L'ORIGINE — Manifeste 1710 ═══════ */}
         <section ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
           <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-0">
             <div ref={manifesteImg} className="md:col-span-7 relative h-[55vh] md:h-screen overflow-hidden will-change-[clip-path,transform] photo-grade">
@@ -271,13 +211,22 @@ export default function Home() {
               <div className="absolute bottom-6 left-6 font-mono text-[10px] tracking-[2px] text-white/80" style={{ fontFamily: "'DM Mono', monospace" }}>EST. MDCCX · PREIGNAC</div>
             </div>
             <div ref={manifesteText} className="md:col-span-5 relative flex items-center px-8 md:px-12 lg:px-16 py-16">
-              <div className="max-w-[420px]">
-                <div className="overflow-hidden mb-6"><span data-line className="inline-block font-mono text-[11px] tracking-[2px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>1710 — Manifeste</span></div>
-                <h2 className="font-serif text-[clamp(38px,5vw,68px)] font-light leading-[1.02] mb-8 tracking-[-1.5px]">
+              <div className="max-w-[440px]">
+                <div className="overflow-hidden mb-6">
+                  <span data-line className="inline-block font-mono text-[11px] tracking-[3px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>
+                    CHAPITRE I — L&apos;ORIGINE
+                  </span>
+                </div>
+                <h2 className="font-serif text-[clamp(38px,5vw,68px)] font-light leading-[1.02] mb-7 tracking-[-1.5px]">
                   <span className="block overflow-hidden"><span data-line className="inline-block">Trois siècles</span></span>
                   <span className="block overflow-hidden"><span data-line className="inline-block italic" style={{ color: "var(--gold)" }}>de patience</span></span>
                   <span className="block overflow-hidden"><span data-line className="inline-block">incarnée.</span></span>
                 </h2>
+                <div className="overflow-hidden">
+                  <p data-line className="font-sans text-[14px] leading-[1.95] mb-4" style={{ color: "var(--ink2)" }}>
+                    Depuis 1710, la famille Medeville cultive l&apos;art du vin à Preignac, au cœur du Sauternais. En 2000, l&apos;union de Julie Medeville et Xavier Gonet rassemble deux savoir-faire d&apos;exception — le Bordelais et la Champagne — pour créer une maison unique en France.
+                  </p>
+                </div>
                 <div className="overflow-hidden">
                   <p data-line className="font-sans text-[14px] leading-[1.95]" style={{ color: "var(--ink2)" }}>
                     De la pierre calcaire qui porte la vigne au verre qui révèle le millésime, chaque geste s&apos;inscrit dans le temps long. Nous ne précipitons rien.
@@ -288,10 +237,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ INTERMISSION — chapter II ═══════ */}
-        <ChapterTransition number="II" title="Le Geste" subtitle="DANS LE SILENCE DES CHAIS, LA MATIÈRE PREND FORME" variant="photo" image={photos.barrels} />
-
-        {/* ═══════ CAVE ═══════ */}
+        {/* ═══════ CHAPITRE II · LE GESTE — Cave ═══════ */}
         <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
           <div ref={caveBg} className="absolute inset-0 will-change-[clip-path] photo-grade">
             <img src={photos.cellar} alt="Cave de Gilette" className="w-full h-full object-cover" />
@@ -304,64 +250,37 @@ export default function Home() {
             <div className="absolute bottom-4 left-5 font-mono text-[10px] tracking-[2px] text-white/85" style={{ fontFamily: "'DM Mono', monospace" }}>JULIE MEDEVILLE</div>
           </div>
 
-          <div ref={caveText} className="absolute left-[6%] lg:left-[10%] top-1/2 -translate-y-1/2 max-w-[440px] z-10" style={{ color: "#F7F5F0" }}>
-            <div className="overflow-hidden mb-5"><span data-line className="inline-block font-mono text-[11px] tracking-[2px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>002 — Le Geste</span></div>
+          <div ref={caveText} className="absolute left-[6%] lg:left-[10%] top-1/2 -translate-y-1/2 max-w-[460px] z-10" style={{ color: "#F7F5F0" }}>
+            <div className="overflow-hidden mb-5">
+              <span data-line className="inline-block font-mono text-[11px] tracking-[3px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>
+                CHAPITRE II — LE GESTE
+              </span>
+            </div>
             <h2 className="font-serif text-[clamp(34px,4.5vw,60px)] font-light leading-[1.05] mb-7 tracking-[-1px]">
               <span data-line className="block">Les bouteilles dorment.</span>
               <span data-line className="block italic" style={{ color: "var(--gold)" }}>Nous veillons.</span>
             </h2>
-            <p data-line className="font-sans text-[14px] leading-[1.95] mb-8" style={{ color: "rgba(247,245,240,0.7)" }}>
+            <p data-line className="font-sans text-[14px] leading-[1.9] mb-6" style={{ color: "rgba(247,245,240,0.72)" }}>
               Dans le silence des chais, Julie et Xavier prolongent un héritage. Pas d&apos;artifice, pas de hâte — la lumière, la fraîcheur, et le temps font le reste.
             </p>
+            <div data-line className="flex flex-wrap gap-x-8 gap-y-3 mb-7" style={{ color: "rgba(247,245,240,0.6)" }}>
+              <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>3 CHAIS HISTORIQUES</span>
+              <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>500 FÛTS DE CHÊNE</span>
+              <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>14°C CONSTANT</span>
+            </div>
             <div data-line><button className="btn-fill" data-hover data-cursor="visit" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}><span>Visiter les chais</span></button></div>
           </div>
         </section>
 
-        {/* ═══════ INTERMISSION — Liquid pour transition ═══════ */}
-        <div ref={pourSec} className="relative h-[80vh] overflow-hidden" style={{ background: "var(--bg)" }}>
-          <img src={photos.vineyard1} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.1" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, var(--bg) 0%, rgba(247,245,240,0.05) 30%, rgba(247,245,240,0.05) 70%, var(--bg) 100%)" }} />
-          {/* The wine "pour" — a wine-coloured panel that scrolls down through the section */}
-          <div ref={pourLiquid} aria-hidden className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(91,26,46,0.0) 5%, #5b1a2e 35%, #2a0510 100%)", mixBlendMode: "multiply" }} />
-          <div className="absolute inset-0 flex items-center justify-center px-8">
-            <SplitText as="h3" by="word" className="font-serif text-white text-[clamp(38px,7vw,110px)] font-light italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.4)] text-center tracking-[-1.5px] leading-[0.95]">
-              {"L'art\ndu temps."}
-            </SplitText>
-          </div>
-        </div>
+        {/* ═══════ Au fil des saisons (calendrier) ═══════ */}
+        <CalendrierVigneron />
 
-        {/* ═══════ INTERMISSION — chapter III ═══════ */}
-        <ChapterTransition number="III" title="La Bouteille" subtitle="L'INSTANT FIGÉ D'UN MILLÉSIME RARE" variant="flood" color="wine" />
+        {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery ═══════ */}
+        <EditorialGallery wines={wines} />
 
-        {/* ═══════ BOTTLE SHOWCASE — magnetic tilt ═══════ */}
-        <section ref={bottleSec} className="h-screen flex items-center justify-center relative" style={{ background: "var(--bg)" }}>
-          <div ref={bottleWrap} className="absolute inset-0 z-10 flex items-center justify-center">
-            <div ref={bottleImg} className="opacity-0 will-change-transform" style={{ filter: "drop-shadow(0 60px 90px rgba(14,14,12,0.35))", perspective: "800px", transformStyle: "preserve-3d" }}>
-              <Image src={wines[0].image} alt={wines[0].name} width={280} height={700} priority className="object-contain select-none pointer-events-none" style={{ maxHeight: "78vh" }} />
-            </div>
-          </div>
-          <div ref={bottleText} className="absolute right-[8%] lg:right-[12%] top-1/2 -translate-y-1/2 max-w-[420px] opacity-0 z-20">
-            <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-5" style={{ fontFamily: "'DM Mono', monospace" }}>003 — Sauternes</span>
-            <h2 className="font-serif text-[clamp(34px,4vw,56px)] font-light leading-[1.05] mb-3">Château Gilette</h2>
-            <p className="font-serif text-[15px] italic mb-6" style={{ color: "var(--ink2)" }}>Crème de Tête — {wines[0].year}</p>
-            <p className="font-sans text-[13px] leading-[2] mb-8" style={{ color: "var(--ink2)" }}>{wines[0].description}</p>
-            <div className="flex gap-12 mb-10">
-              <div><span className="font-mono text-[10px] block mb-1.5 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Cépages</span><span className="font-sans text-[12px]" style={{ color: "var(--ink2)" }}>{wines[0].blend}</span></div>
-              <div><span className="font-mono text-[10px] block mb-1.5 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Vignoble</span><span className="font-sans text-[12px]" style={{ color: "var(--ink2)" }}>{wines[0].surface}</span></div>
-            </div>
-            <button className="btn-fill" data-hover data-cursor="open"><span>Fiche complète</span></button>
-          </div>
-          <div ref={bottleNum} className="absolute left-[6%] bottom-[12%] opacity-0 z-10">
-            <div className="font-serif text-[clamp(80px,11vw,180px)] font-light leading-none" style={{ color: "rgba(158,130,90,0.22)" }}>01</div>
-          </div>
-        </section>
-
-        {/* ═══════ MILLESIME spotlight ═══════ */}
-        <Millesime />
-
-        {/* ═══════ Wine fill ═══════ */}
+        {/* ═══════ Wine fill + GLOBAL stats fused ═══════ */}
         <section ref={fillRef} className="py-20 md:py-24 px-8 md:px-16 relative overflow-hidden" style={{ background: "var(--warm)" }}>
-          <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
             <div className="flex-shrink-0 w-[120px] h-[300px] relative" data-reveal>
               <svg viewBox="0 0 120 300" className="w-full h-full">
                 <defs>
@@ -375,27 +294,42 @@ export default function Home() {
                 </g>
               </svg>
             </div>
-            <div className="flex-1 max-w-[500px]" data-reveal>
-              <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-5" style={{ fontFamily: "'DM Mono', monospace" }}>L&apos;expérience</span>
+            <div className="flex-1 max-w-[600px]" data-reveal>
+              <span className="font-mono text-[11px] tracking-[3px] text-[var(--gold)] block mb-5" style={{ fontFamily: "'DM Mono', monospace" }}>L&apos;EXPÉRIENCE</span>
               <SplitText as="h2" by="word" className="font-serif text-[clamp(32px,4vw,52px)] font-light leading-[1.1] mb-6 tracking-[-0.5px]">
                 Un art de la patience.
               </SplitText>
-              <p className="font-sans text-[13px] leading-[2]" style={{ color: "var(--ink2)" }}>
-                Chez Gonet-Medeville, le temps est un allié. Château Gilette repose vingt ans en cuves béton avant sa mise en bouteille. Les Champagnes vieillissent quatorze ans sur lattes.
+              <p className="font-sans text-[14px] leading-[1.95] mb-8" style={{ color: "var(--ink2)" }}>
+                Chez Gonet-Medeville, le temps est un allié. Château Gilette repose vingt ans en cuves béton avant sa mise en bouteille. Les Champagnes vieillissent quatorze ans sur lattes. Chaque cuvée s&apos;élève à son rythme.
               </p>
-              <div className="mt-8 flex items-center gap-8">
+              <div className="flex items-center gap-7 mb-10 flex-wrap">
                 <Stat n="20" l="ans en cuves" />
                 <Sep />
                 <Stat n="14" l="ans sur lattes" />
                 <Sep />
-                <Stat n="5k" l="bouteilles" />
+                <Stat n="5k" l="bouteilles / an" />
+              </div>
+              <div className="h-[1px] w-24 mb-10" style={{ background: "var(--gold)" }} />
+              <span className="font-mono text-[10px] tracking-[3px] block mb-5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>LA MAISON EN CHIFFRES</span>
+              <div className="flex items-center gap-7 flex-wrap">
+                <Stat n="1710" l="fondation" />
+                <Sep />
+                <Stat n="7" l="domaines" />
+                <Sep />
+                <Stat n="43" l="hectares" />
+                <Sep />
+                <Stat n="~17k" l="caisses / an" />
               </div>
             </div>
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--bg))" }} />
         </section>
 
+        {/* ═══════ Dégustation ritual ═══════ */}
+        <Degustation />
+
         {/* ═══════ QUOTE ═══════ */}
-        <section ref={quoteSec} className="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
+        <section ref={quoteSec} className="min-h-[60vh] flex items-center justify-center relative overflow-hidden">
           <img src={photos.julieXavierCave} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" style={{ filter: "blur(2px) brightness(0.4)" }} />
           <div ref={quoteBg} className="absolute inset-0 flex items-center justify-center" style={{ background: "var(--ink)", clipPath: "circle(0% at 50% 50%)" }}>
             <div className="max-w-[680px] px-8 text-center" style={{ color: "#F7F5F0" }}>
@@ -406,12 +340,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* ═══════ Calendrier du vigneron ═══════ */}
-        <CalendrierVigneron />
-
-        {/* ═══════ Dégustation ritual ═══════ */}
-        <Degustation />
 
         {/* ═══════ MOOD BOARD ═══════ */}
         <section className="py-16 md:py-24 px-4 md:px-8">
@@ -429,20 +357,20 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════ INTERMISSION — chapter IV ═══════ */}
-        <ChapterTransition number="IV" title="La Collection" subtitle="QUATRE APPELLATIONS · SEPT DOMAINES" variant="scramble" />
+        {/* ═══════ Press / awards ═══════ */}
+        <Press />
 
-        {/* ═══════ Editorial wine gallery (no cards, focused) ═══════ */}
-        <EditorialGallery wines={wines} />
-
-        <MarqueeXXL reverse />
-
-        {/* ═══════ INTERMISSION — chapter V ═══════ */}
-        <ChapterTransition number="V" title="L'Héritage" subtitle="UNE LIGNÉE · UNE PROMESSE · UN FUTUR" variant="photo" image={photos.cellar} />
-
-        {/* ═══════ HÉRITAGE ═══════ */}
-        <section ref={heritageSec} className="py-24 md:py-32 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
+        {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Heritage timeline ═══════ */}
+        <section ref={heritageSec} className="py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>
           <div className="max-w-[1300px] mx-auto">
+            <div className="mb-14" data-reveal>
+              <span className="font-mono text-[11px] tracking-[3px] block mb-3" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+                CHAPITRE IV — L&apos;HÉRITAGE
+              </span>
+              <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(34px, 4.5vw, 60px)" }}>
+                Une lignée, <span className="italic" style={{ color: "var(--gold)" }}>une promesse</span>.
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
               <div className="md:col-span-5 md:sticky md:top-24 self-start">
                 <div ref={heritageImg} className="relative w-full aspect-[4/5] overflow-hidden photo-grade">
@@ -456,20 +384,17 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="md:col-span-7 space-y-20 md:space-y-28">
+              <div className="md:col-span-7 space-y-16 md:space-y-20">
                 {heritage.map((item, i) => (
                   <div key={i} data-heritage-row className="flex items-start gap-6 md:gap-12">
                     <span data-h-year className="font-serif text-[clamp(48px,7vw,110px)] font-light leading-none flex-shrink-0 tracking-[-2px] will-change-transform" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
-                    <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[460px] pt-2 md:pt-4 will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
+                    <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[480px] pt-2 md:pt-4 will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </section>
-
-        {/* ═══════ Press / awards ═══════ */}
-        <Press />
 
         {/* ═══════ Photo break sunset ═══════ */}
         <div className="relative h-[40vh] md:h-[55vh] overflow-hidden">
@@ -485,44 +410,65 @@ export default function Home() {
         <section className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row gap-14 md:gap-24">
             <div className="flex-1" data-reveal>
-              <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>Nos terroirs</span>
+              <span className="font-mono text-[11px] tracking-[3px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>NOS TERROIRS</span>
               <SplitText as="h2" by="word" className="font-serif text-[clamp(32px,4vw,56px)] font-light leading-[1.1] mb-8 tracking-[-1px]">
-                De la craie à la grave.
+                Quatre appellations, un même geste.
               </SplitText>
-              <p className="font-sans text-[13px] leading-[2] max-w-[380px]" style={{ color: "rgba(247,245,240,0.5)" }}>Chaque domaine est le fruit d&apos;un terroir singulier, façonné par la géologie et le savoir-faire humain.</p>
+              <p className="font-sans text-[14px] leading-[1.95] max-w-[400px]" style={{ color: "rgba(247,245,240,0.55)" }}>
+                Chaque domaine est le fruit d&apos;un terroir singulier, façonné par la géologie et le savoir-faire humain. La complémentarité des terroirs — du calcaire champenois aux graves bordelaises — fait la singularité de la maison.
+              </p>
             </div>
-            <div className="flex-1 grid grid-cols-2 gap-x-10 gap-y-10">
+            <div className="flex-1 grid grid-cols-2 gap-x-10 gap-y-12">
               {[
-                { name: "Champagne", detail: "Craie · Grands & 1ers Crus", ha: "12 ha" },
-                { name: "Sauternes", detail: "Sable, calcaire, argile", ha: "13 ha" },
-                { name: "Margaux", detail: "Graves profondes", ha: "2,9 ha" },
-                { name: "Graves", detail: "Graves, argile, sable", ha: "15 ha" },
+                { name: "Champagne", detail: "Craie · Grands & 1ers Crus", line: "La pureté minérale du Mesnil-sur-Oger.", ha: "12 ha" },
+                { name: "Sauternes", detail: "Sable, calcaire, argile", line: "Le berceau historique de la maison.", ha: "13 ha" },
+                { name: "Margaux", detail: "Graves profondes", line: "L'élégance discrète d'un micro-domaine.", ha: "2,9 ha" },
+                { name: "Graves", detail: "Graves, argile, sable", line: "Des blancs ciselés, des rouges au grain fin.", ha: "15 ha" },
               ].map(t => (
                 <div key={t.name} data-reveal className="group">
-                  <div className="font-serif text-[20px] font-light mb-1.5 group-hover:text-[var(--gold)] transition-colors duration-500">{t.name}</div>
-                  <div className="font-sans text-[11px]" style={{ color: "rgba(247,245,240,0.4)" }}>{t.detail}</div>
-                  <div className="font-mono text-[11px] mt-1.5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{t.ha}</div>
+                  <div className="font-serif text-[22px] font-light mb-2 group-hover:text-[var(--gold)] transition-colors duration-500">{t.name}</div>
+                  <div className="font-sans text-[11px] mb-2" style={{ color: "rgba(247,245,240,0.45)" }}>{t.detail}</div>
+                  <p className="font-serif italic text-[13px] leading-[1.55] mb-3" style={{ color: "rgba(247,245,240,0.7)" }}>{t.line}</p>
+                  <div className="font-mono text-[11px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{t.ha}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="py-20 px-8 md:px-16">
-          <div className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[{ n: "1710", l: "Fondation" }, { n: "7", l: "Domaines" }, { n: "43", l: "Hectares" }, { n: "~17k", l: "Caisses / an" }].map((s, i) => (
-              <div key={i} className="text-center" data-reveal>
-                <div data-counter={s.n} className="font-serif text-[clamp(36px,5vw,64px)] font-light leading-none tracking-[-1px]">0</div>
-                <div className="font-mono text-[10px] tracking-[1px] mt-2.5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{s.l}</div>
-              </div>
-            ))}
+        {/* ═══════ CONTACT / CTA — full-bleed vineyard ═══════ */}
+        <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+          <img src={photos.vineyard1} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.4) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.55) 100%)" }} />
+          <div className="relative z-10 text-center max-w-[640px] px-8" style={{ color: "#F7F5F0" }}>
+            <span className="font-mono text-[11px] tracking-[5px] mb-5 block" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>NOUS RENDRE VISITE</span>
+            <SplitText as="h2" by="word" className="font-serif font-light leading-[1.05] tracking-[-1px] mb-6" style={{ fontSize: "clamp(34px, 4.6vw, 64px)" }}>
+              4 Rue du Port, Preignac.
+            </SplitText>
+            <p className="font-serif italic font-light mb-8" style={{ fontSize: "clamp(15px, 1.2vw, 18px)", color: "rgba(247,245,240,0.85)" }}>
+              33210 Gironde · sur rendez-vous.
+            </p>
+            <div className="font-mono text-[11px] tracking-[2px] mb-10" style={{ color: "rgba(247,245,240,0.7)", fontFamily: "'DM Mono', monospace" }}>
+              +33 5 56 76 28 44 · CONTACT@GONET-MEDEVILLE.COM
+            </div>
+            <a
+              href="https://www.gonet-medeville.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-fill inline-block"
+              data-hover
+              data-cursor="open"
+              style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}
+            >
+              <span>Visiter le site officiel</span>
+            </a>
           </div>
         </section>
 
-        <footer className="py-14 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
-          <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row justify-between gap-10 mb-14">
+        <footer className="py-12 px-8 md:px-16 lg:px-24" style={{ background: "var(--warm)" }}>
+          <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row justify-between gap-10 mb-12">
             <div className="flex items-center gap-4">
-              <img src="/logo.png" alt="Gonet-Medeville" className="w-14 h-14" />
+              <img src="/logo.png" alt="Gonet-Medeville" width={56} height={56} className="w-14 h-14" />
               <div>
                 <div className="font-serif text-[22px] font-light">Gonet-Medeville</div>
                 <p className="font-sans text-[11px] leading-relaxed" style={{ color: "var(--ink2)" }}>Vignobles familiaux — Bordeaux &amp; Champagne</p>
@@ -557,6 +503,7 @@ function Stat({ n, l }: { n: string; l: string }) {
     </div>
   );
 }
+
 function Sep() {
   return <div className="w-[1px] h-12" style={{ background: "rgba(158,130,90,0.2)" }} />;
 }
@@ -569,23 +516,6 @@ function MoodTile({ src, label, caption, className = "", mood, big }: { src: str
       <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
         <span className={`font-serif italic text-white leading-tight ${big ? "text-[18px]" : "text-[14px]"}`}>{label}</span>
         {caption && <span className="font-mono text-[9px] tracking-[2px] text-white/70" style={{ fontFamily: "'DM Mono', monospace" }}>{caption}</span>}
-      </div>
-    </div>
-  );
-}
-
-function MarqueeXXL({ reverse }: { reverse?: boolean }) {
-  const items = ["Sauternes", "·", "Champagne", "·", "Margaux", "·", "Graves", "·", "Bordeaux Supérieur", "·"];
-  return (
-    <div className="overflow-hidden border-y" style={{ borderColor: "rgba(158,130,90,0.15)", background: "var(--bg)" }}>
-      <div className={`flex gap-16 whitespace-nowrap py-2 ${reverse ? "animate-marqueeR" : "animate-marquee"}`} style={{ width: "fit-content" }}>
-        {[0, 1].map(j => (
-          <div key={j} className="flex gap-16 items-center">
-            {items.map((t, i) => (
-              <span key={i} className={t === "·" ? "text-[18px] text-[var(--gold)] opacity-50" : "font-serif font-light italic tracking-[-1px]"} style={t === "·" ? {} : { fontSize: "clamp(60px, 11vw, 180px)", lineHeight: 1 }}>{t}</span>
-            ))}
-          </div>
-        ))}
       </div>
     </div>
   );

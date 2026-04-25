@@ -67,35 +67,35 @@ export default function EditorialGallery({ wines }: Props) {
         const prose = el.querySelectorAll<HTMLElement>("[data-prose]");
         const ghost = el.querySelector<HTMLElement>("[data-ghost]");
 
-        // bottle: scale 0.75 -> 1.08, tilt -3deg at full focus, slight y dip on neighbours
+        // bottle: scale 0.78 -> 1.08, tilt -3deg at full focus, slight blur on neighbours
         if (bottle) {
           gsap.to(bottle, {
-            scale: 0.75 + focus * 0.33,
+            scale: 0.78 + focus * 0.30,
             rotate: -3 * focus,
-            y: (1 - focus) * 24,
-            opacity: 0.4 + focus * 0.6,
+            y: (1 - focus) * 22,
+            opacity: 0.45 + focus * 0.55,
+            filter: `blur(${(1 - focus) * 1.5}px)`,
             duration: 0.6,
             ease: "power2.out",
             overwrite: "auto",
           });
         }
-        // text block: scale 1 -> 1.02, opacity bias to focus
+        // text block: smoother focus, less brutal opacity gap
         if (txt) {
           gsap.to(txt, {
-            scale: 0.94 + focus * 0.08,
-            opacity: 0.4 + focus * 0.6,
-            y: (1 - focus) * 16,
+            scale: 0.95 + focus * 0.05,
+            opacity: 0.35 + focus * 0.65,
+            y: (1 - focus) * 14,
             duration: 0.6,
             ease: "power2.out",
             overwrite: "auto",
           });
         }
-        // prose details: only show for the focused wine (focus^2 sharpens the curve)
         prose.forEach((p) => {
           gsap.to(p, { opacity: focus * focus, duration: 0.5, ease: "power2.out", overwrite: "auto" });
         });
         if (ghost) {
-          gsap.to(ghost, { opacity: 0.05 + focus * 0.12, duration: 0.6, ease: "power2.out", overwrite: "auto" });
+          gsap.to(ghost, { opacity: 0.08 + focus * 0.10, duration: 0.6, ease: "power2.out", overwrite: "auto" });
         }
       });
 
@@ -111,7 +111,7 @@ export default function EditorialGallery({ wines }: Props) {
       dots.forEach((d, i) => {
         gsap.to(d, {
           background: i === activeIdx ? accent : "rgba(158,130,90,0.25)",
-          width: i === activeIdx ? "32px" : "24px",
+          width: i === activeIdx ? "44px" : "22px",
           duration: 0.5,
           ease: "power2.out",
         });
@@ -174,6 +174,16 @@ export default function EditorialGallery({ wines }: Props) {
     <section ref={sectionRef} className="relative h-screen overflow-hidden" style={{ background: "var(--bg)" }}>
       {/* Accent-coloured tint that fades between wines */}
       <div ref={tintRef} aria-hidden className="absolute inset-0 pointer-events-none transition-[background] duration-700" />
+
+      {/* Fixed chapter heading — visible during the entire horizontal scroll */}
+      <div className="absolute top-10 md:top-14 left-8 md:left-14 z-20 pointer-events-none">
+        <span className="font-mono text-[10px] tracking-[4px] block mb-2" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+          CHAPITRE III — LA COLLECTION
+        </span>
+        <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(28px, 3vw, 44px)", color: "var(--ink)" }}>
+          Nos cuvées
+        </h2>
+      </div>
 
       <div
         ref={trackRef}
