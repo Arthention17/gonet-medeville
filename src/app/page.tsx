@@ -54,14 +54,34 @@ export default function Home() {
       gsap.fromTo(quoteBg.current, { clipPath: "circle(0% at 50% 50%)" },
         { clipPath: "circle(85% at 50% 50%)", scrollTrigger: { trigger: quoteSec.current, start: "top 55%", end: "center center", scrub: 1 } });
 
-      // ── GALLERY SNAP ──
+      // ── GALLERY SNAP with active focus ──
       if (galleryTrack.current && gallerySec.current) {
         const tw = galleryTrack.current.scrollWidth - window.innerWidth;
+        let currentActive = -1;
+
         gsap.to(galleryTrack.current, { x: -tw, ease: "none",
           scrollTrigger: {
-            trigger: gallerySec.current, start: "top top", end: () => `+=${tw}`,
-            pin: true, scrub: 0.8, anticipatePin: 1,
-            snap: { snapTo: 1 / (wines.length - 1), duration: 0.5, ease: "power2.inOut" },
+            trigger: gallerySec.current, start: "top top", end: () => `+=${tw * 1.3}`,
+            pin: true, scrub: 1.2, anticipatePin: 1,
+            snap: { snapTo: 1 / (wines.length - 1), duration: 0.8, delay: 0.1, ease: "power3.inOut" },
+            onUpdate: (self) => {
+              const idx = Math.round(self.progress * (wines.length - 1));
+              if (idx !== currentActive) {
+                // Reset previous
+                if (currentActive >= 0) {
+                  const prevBottle = document.querySelector(`[data-wine-bottle="${currentActive}"]`);
+                  const prevInfo = document.querySelector(`[data-wine-info="${currentActive}"]`);
+                  if (prevBottle) gsap.to(prevBottle, { scale: 1, rotate: 0, y: 0, duration: 0.6, ease: "power2.out" });
+                  if (prevInfo) gsap.to(prevInfo, { scale: 1, y: 0, duration: 0.6, ease: "power2.out" });
+                }
+                // Activate new
+                const newBottle = document.querySelector(`[data-wine-bottle="${idx}"]`);
+                const newInfo = document.querySelector(`[data-wine-info="${idx}"]`);
+                if (newBottle) gsap.to(newBottle, { scale: 1.08, rotate: -2.5, y: -10, duration: 0.8, ease: "power2.out" });
+                if (newInfo) gsap.to(newInfo, { scale: 1.02, y: -5, duration: 0.8, ease: "power2.out" });
+                currentActive = idx;
+              }
+            }
           }
         });
       }
@@ -260,14 +280,24 @@ export default function Home() {
           <div ref={galleryTrack} className="flex h-screen items-center" style={{ width: `${wines.length * 100}vw` }}>
             {wines.map((wine, idx) => (
               <div key={wine.id} className="w-screen h-screen flex items-center flex-shrink-0 relative px-8 md:px-16">
+                {/* Colored ambient glow per wine */}
+                <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000" style={{
+                  background: `radial-gradient(ellipse at 30% 50%, ${wine.accent}12 0%, transparent 50%)`
+                }} />
+
                 <div className="w-full max-w-[1100px] mx-auto flex items-center gap-[clamp(32px,5vw,80px)]">
-                  <div className="flex-shrink-0 relative">
-                    <div style={{ filter: "drop-shadow(0 30px 60px rgba(14,14,12,0.2))" }}>
-                      <Image src={wine.image} alt={wine.name} width={200} height={520} className="object-contain select-none" style={{ maxHeight: "62vh" }} />
-                    </div>
+                  {/* Bottle with tilt target */}
+                  <div data-wine-bottle={idx} className="flex-shrink-0 relative" style={{
+                    filter: "drop-shadow(0 30px 60px rgba(14,14,12,0.2))",
+                    transformOrigin: "bottom center",
+                    transition: "filter 0.6s ease",
+                  }}>
+                    <Image src={wine.image} alt={wine.name} width={200} height={520} className="object-contain select-none" style={{ maxHeight: "62vh" }} />
                     <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[2px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{String(idx + 1).padStart(2, "0")}</div>
                   </div>
-                  <div className="flex-1 max-w-[460px]">
+
+                  {/* Info with scale target */}
+                  <div data-wine-info={idx} className="flex-1 max-w-[460px]" style={{ transformOrigin: "left center" }}>
                     <span className="font-mono text-[10px] tracking-[1px] block mb-4" style={{ color: wine.accent, fontFamily: "'DM Mono', monospace" }}>{wine.appellation}</span>
                     <h3 className="font-serif text-[clamp(28px,3vw,46px)] font-light leading-[1.1] mb-1">
                       {wine.prefix !== "Champagne" && <span className="block text-[0.55em] font-normal" style={{ color: "var(--ink2)" }}>{wine.prefix}</span>}
@@ -282,7 +312,9 @@ export default function Home() {
                     <button className="btn-fill" data-hover><span>Découvrir</span></button>
                   </div>
                 </div>
-                <div className="absolute bottom-[8%] right-[5%] font-serif text-[clamp(60px,12vw,160px)] font-light leading-none pointer-events-none select-none" style={{ color: "rgba(158,130,90,0.07)" }}>{wine.year}</div>
+
+                {/* Year watermark */}
+                <div className="absolute bottom-[8%] right-[5%] font-serif text-[clamp(60px,12vw,160px)] font-light leading-none pointer-events-none select-none" style={{ color: `${wine.accent}12` }}>{wine.year}</div>
               </div>
             ))}
           </div>
