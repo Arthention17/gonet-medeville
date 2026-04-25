@@ -1,34 +1,34 @@
 // All assets are local under /public/photos and /public/bottles
 export const photos = {
-  // hero & landscape
+  // Hero & paysages
   hero: "/photos/vignoble-panorama.png",
   vineyard1: "/photos/vignoble-automne.png",
   vineyard2: "/photos/vignoble-eglise.png",
-  sunset: "/photos/vignoble-chapelle.png",
+  sunset: "/photos/vignoble-sunset.png",
+  champagneMoulin: "/photos/vignoble-champagne-moulin.png",
+  terrasses: "/photos/vignoble-terrasses.png",
   chateau: "/photos/chateau-preignac.png",
+  chateauEyrins: "/photos/chateau-eyrins.png",
+  chapelle: "/photos/vignoble-chapelle.png",
 
-  // people / cellar
-  cellar: "/photos/cave-bouteilles.png",
+  // Julie & Xavier
   julieCave: "/photos/julie-cave-portrait.png",
   julieXavierCave: "/photos/julie-xavier-cave.png",
   julieXavierCuves: "/photos/julie-xavier-cuves.png",
-  xavierFuts: "/photos/xavier-futs.png",
+  julieXavierPortrait: "/photos/julie-xavier-portrait.png",
+  julieXavierVignes: "/photos/julie-xavier-vignes.png",
 
-  // craft
+  // Cave & craft
+  cellar: "/photos/cave-bouteilles.png",
+  xavierFuts: "/photos/xavier-futs.png",
   barrels: "/photos/xavier-futs.png",
   cork: "/photos/bouchons.png",
   grapes: "/photos/vendanges.png",
-  grapes2: "/photos/vignes-rangs.png",
   rows: "/photos/vignes-rangs.png",
+  monplaisirCaisse: "/photos/monplaisir-caisse.png",
 
-  // objects
+  // Objets
   etiquette: "/photos/etiquette-tradition.png",
   coffret: "/photos/champagne-coffret.png",
   vieillesBouteilles: "/photos/vieilles-bouteilles.png",
-
-  // legacy aliases (kept for compatibility with existing JSX usage)
-  glass: "/photos/julie-cave-portrait.png",
-  pour: "/photos/julie-xavier-cave.png",
-  hands: "/photos/julie-xavier-cuves.png",
-  tasting: "/photos/julie-cave-portrait.png",
 };

@@ -15,6 +15,11 @@ import Degustation from "@/components/Degustation";
 import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
+
+const FEATURED_IDS = ["gilette", "champ-alouette", "eyrins", "respide", "athenais", "rose", "grande-ruelle", "theophile"];
+const featuredWines = FEATURED_IDS
+  .map(id => wines.find(w => w.id === id))
+  .filter((w): w is (typeof wines)[number] => Boolean(w));
 import { photos } from "@/lib/images";
 
 const BubbleField = dynamic(() => import("@/components/BubbleField"), { ssr: false });
@@ -54,10 +59,10 @@ export default function Home() {
   const heritageImg = useRef<HTMLDivElement>(null);
 
   const heritage = [
-    { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance des domaines de Gilette et des Justices au cœur du Sauternais — une histoire qui ne s'est jamais interrompue.", image: photos.chateau },
+    { year: "1710", text: "La famille Despujols acquiert les terres de Preignac. Naissance des domaines de Gilette et des Justices au cœur du Sauternais — une histoire qui ne s'est jamais interrompue.", image: photos.chapelle },
     { year: "1930", text: "René Medeville découvre le vieillissement long en cuves béton — vingt années de patience pour révéler la quintessence d'un Sauternes. Cette signature unique forge la légende de Gilette.", image: photos.xavierFuts },
-    { year: "2000", text: "Xavier Gonet et Julie Medeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Medeville — pour la première fois, deux terroirs d'exception conjugués sous un même nom.", image: photos.julieXavierCuves },
-    { year: "2009", text: "Acquisition du Château des Eyrins — trois hectares cernés par les vignes du Premier Grand Cru Classé Château Margaux. Le micro-domaine entre dans la maison.", image: photos.vineyard1 },
+    { year: "2000", text: "Xavier Gonet et Julie Medeville unissent Bordeaux et Champagne. Naissance des Champagnes Gonet-Medeville — pour la première fois, deux terroirs d'exception conjugués sous un même nom.", image: photos.julieXavierVignes },
+    { year: "2009", text: "Acquisition du Château des Eyrins — trois hectares cernés par les vignes du Premier Grand Cru Classé Château Margaux. Le micro-domaine entre dans la maison.", image: photos.chateauEyrins },
   ];
 
   useEffect(() => {
@@ -297,8 +302,8 @@ export default function Home() {
           variant="split"
         />
 
-        {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery ═══════ */}
-        <EditorialGallery wines={wines} />
+        {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery (8 vins vedettes) ═══════ */}
+        <EditorialGallery wines={featuredWines} />
 
         {/* ═══════ Wine fill + GLOBAL stats fused ═══════ */}
         <section ref={fillRef} className="py-20 md:py-24 px-8 md:px-16 relative overflow-hidden" style={{ background: "var(--warm)" }}>
@@ -366,13 +371,13 @@ export default function Home() {
         {/* ═══════ MOOD BOARD ═══════ */}
         <section className="py-16 md:py-24 px-4 md:px-8">
           <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-3 auto-rows-[160px] md:auto-rows-[200px]">
-            <MoodTile mood src={photos.cellar} label="Les chais" caption="GILETTE 1989" className="col-span-2 row-span-2" big />
-            <MoodTile mood src={photos.julieCave} label="Julie · cave" className="col-span-2 row-span-2" big />
-            <MoodTile mood src={photos.barrels} label="Fûts · Xavier" className="row-span-2" />
+            <MoodTile mood src={photos.terrasses} label="Terrasses · Champagne" caption="LE TERROIR" className="col-span-2 row-span-2" big />
+            <MoodTile mood src={photos.julieXavierCuves} label="Julie & Xavier · cuves" className="col-span-2 row-span-2" big />
+            <MoodTile mood src={photos.xavierFuts} label="Fûts · Xavier" className="row-span-2" />
             <MoodTile mood src={photos.cork} label="Bouchons" />
             <MoodTile mood src={photos.coffret} label="Coffret · Champagne" />
-            <MoodTile mood src={photos.rows} label="Les rangs" caption="LE TERROIR" className="col-span-2" />
-            <MoodTile mood src={photos.julieXavierCuves} label="Cuves béton" />
+            <MoodTile mood src={photos.champagneMoulin} label="Moulin · Champagne" caption="MESNIL-SUR-OGER" className="col-span-2" />
+            <MoodTile mood src={photos.monplaisirCaisse} label="Caisse · Monplaisir" />
             <MoodTile mood src={photos.etiquette} label="Étiquette" />
             <MoodTile mood src={photos.vieillesBouteilles} label="Vieux millésimes" />
             <MoodTile mood src={photos.grapes} label="Vendanges" />
@@ -467,7 +472,7 @@ export default function Home() {
 
         {/* ═══════ CONTACT / CTA — full-bleed vineyard ═══════ */}
         <section id="contact" className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-          <img src={photos.vineyard1} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)" }} />
+          <img src={photos.julieXavierPortrait} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)" }} />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.4) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.55) 100%)" }} />
           <div className="relative z-10 text-center max-w-[640px] px-8" style={{ color: "#F7F5F0" }}>
             <span className="font-mono text-[11px] tracking-[5px] mb-5 block" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>NOUS RENDRE VISITE</span>
