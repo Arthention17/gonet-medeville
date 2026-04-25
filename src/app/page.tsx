@@ -7,7 +7,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
-import { wines, champagnes, bordeaux } from "@/lib/wines";
+import { wines, champagnes, coteaux, bordeauxWines } from "@/lib/wines";
 import { photos } from "@/lib/images";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -77,22 +77,23 @@ export default function Home() {
               const p = self.progress * (items.length - 1);
               items.forEach((slide, i) => {
                 const dist = Math.abs(p - i);
-                const active = dist < 0.5;
                 const bottle = slide.querySelector("[data-slide-bottle]") as HTMLElement;
                 const info = slide.querySelector("[data-slide-info]") as HTMLElement;
                 if (bottle) {
-                  gsap.set(bottle, {
-                    scale: active ? 1.12 : 0.78 - dist * 0.05,
-                    y: active ? -15 : 10,
-                    rotate: active ? -2.5 : 0,
-                    opacity: active ? 1 : Math.max(0.2, 0.5 - dist * 0.15),
+                  gsap.to(bottle, {
+                    scale: Math.max(0.7, 1.12 - dist * 0.18),
+                    y: Math.max(-15, -15 + dist * 12),
+                    rotate: dist < 0.6 ? -2.5 + dist * 4 : 0,
+                    opacity: Math.max(0.15, 1 - dist * 0.35),
+                    duration: 0.5, ease: "power2.out", overwrite: "auto",
                   });
                 }
                 if (info) {
-                  gsap.set(info, {
-                    opacity: active ? 1 : Math.max(0.08, 0.3 - dist * 0.1),
-                    scale: active ? 1 : 0.92,
-                    y: active ? 0 : 10,
+                  gsap.to(info, {
+                    opacity: Math.max(0.06, 1 - dist * 0.4),
+                    scale: Math.max(0.9, 1 - dist * 0.05),
+                    y: dist * 8,
+                    duration: 0.5, ease: "power2.out", overwrite: "auto",
                   });
                 }
               });
@@ -213,13 +214,13 @@ export default function Home() {
             <Image src={wines[0].image} alt={wines[0].name} width={260} height={660} priority className="object-contain select-none pointer-events-none" style={{ maxHeight: "75vh" }} />
           </div>
           <div ref={bottleText} className="absolute right-[8%] lg:right-[12%] top-1/2 -translate-y-1/2 max-w-[380px] opacity-0">
-            <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-4" style={{ fontFamily: "'DM Mono', monospace" }}>Grand Cru</span>
-            <h2 className="font-serif text-[clamp(28px,3vw,42px)] font-light leading-[1.1] mb-2">Cuvee Theophile</h2>
-            <p className="font-serif text-[14px] italic mb-5" style={{ color: "var(--ink2)" }}>Extra Brut — 2009</p>
+            <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-4" style={{ fontFamily: "'DM Mono', monospace" }}>Sauternes</span>
+            <h2 className="font-serif text-[clamp(28px,3vw,42px)] font-light leading-[1.1] mb-2">Chateau Gilette</h2>
+            <p className="font-serif text-[14px] italic mb-5" style={{ color: "var(--ink2)" }}>Creme de Tete — {wines[0].year}</p>
             <p className="font-sans text-[12.5px] leading-[2] mb-6" style={{ color: "var(--ink2)" }}>{wines[0].description}</p>
             <div className="flex gap-10">
               <div><span className="font-mono text-[9px] block mb-1 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Cepages</span><span className="font-sans text-[11px]" style={{ color: "var(--ink2)" }}>{wines[0].blend}</span></div>
-              <div><span className="font-mono text-[9px] block mb-1 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Note</span><span className="font-sans text-[11px]" style={{ color: "var(--ink2)" }}>{wines[0].score}</span></div>
+              <div><span className="font-mono text-[9px] block mb-1 text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Vignoble</span><span className="font-sans text-[11px]" style={{ color: "var(--ink2)" }}>{wines[0].surface}</span></div>
             </div>
           </div>
           <div ref={bottleNum} className="absolute left-[6%] bottom-[12%] opacity-0">
@@ -233,19 +234,37 @@ export default function Home() {
             <div className="flex items-end gap-6 mb-12" data-reveal>
               <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Champagnes</span>
               <div className="flex-1 h-[1px]" style={{ background: "rgba(158,130,90,0.15)" }} />
-              <span className="font-mono text-[10px] text-white/25" style={{ fontFamily: "'DM Mono', monospace" }}>7 cuvees</span>
+              <span className="font-mono text-[10px] text-white/25" style={{ fontFamily: "'DM Mono', monospace" }}>6 cuvees</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
               {champagnes.map((c, i) => (
                 <div key={c.name} data-reveal className="group py-4 border-b border-white/[0.06] hover:border-[var(--gold)]/30 transition-colors duration-500">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-serif text-[18px] font-light group-hover:text-[var(--gold)] transition-colors duration-500">{c.name}</h3>
-                    <span className="font-mono text-[9px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>{c.score}</span>
+                    <span className="font-mono text-[9px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>{c.score}/100</span>
                   </div>
-                  <div className="font-mono text-[9px] tracking-[1px] text-white/30 mb-1.5" style={{ fontFamily: "'DM Mono', monospace" }}>{c.type}</div>
-                  <div className="font-sans text-[11px] text-white/40">{c.blend}</div>
+                  <div className="font-mono text-[9px] tracking-[1px] text-white/30 mb-1" style={{ fontFamily: "'DM Mono', monospace" }}>{c.type}</div>
+                  <div className="font-sans text-[11px] text-white/40 mb-1">{c.blend}</div>
+                  <div className="font-sans text-[10px] text-white/25 italic">{c.detail}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Athenais — vin tranquille rouge, pas un champagne */}
+            <div className="mt-12 pt-10 border-t border-white/[0.06]" data-reveal>
+              <div className="flex items-end gap-4 mb-6">
+                <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Vin tranquille</span>
+                <div className="flex-1 h-[1px]" style={{ background: "rgba(158,130,90,0.1)" }} />
+              </div>
+              <div className="max-w-[500px]">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="font-serif text-[22px] font-light">{coteaux.name}</h3>
+                  <span className="font-mono text-[9px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>{coteaux.score}/100</span>
+                </div>
+                <div className="font-mono text-[9px] tracking-[1px] text-white/30 mb-2" style={{ fontFamily: "'DM Mono', monospace" }}>{coteaux.type}</div>
+                <p className="font-sans text-[12px] text-white/45 leading-[1.8] mb-2">{coteaux.description}</p>
+                <div className="font-sans text-[10px] text-white/25 italic">{coteaux.detail}</div>
+              </div>
             </div>
           </div>
         </section>
@@ -360,10 +379,10 @@ export default function Home() {
             <div className="flex items-end gap-6 mb-12" data-reveal>
               <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)]" style={{ fontFamily: "'DM Mono', monospace" }}>Bordeaux</span>
               <div className="flex-1 h-[1px]" style={{ background: "rgba(158,130,90,0.2)" }} />
-              <span className="font-mono text-[10px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>5 domaines</span>
+              <span className="font-mono text-[10px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>7 domaines</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
-              {bordeaux.map((b) => (
+              {bordeauxWines.map((b) => (
                 <div key={b.name} data-reveal className="group py-3 border-b border-black/[0.06] hover:border-[var(--gold)]/30 transition-colors duration-500">
                   <h3 className="font-serif text-[17px] font-light mb-1 group-hover:text-[var(--gold)] transition-colors duration-500">{b.name}</h3>
                   <div className="font-mono text-[9px] tracking-[1px] mb-1" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{b.appellation}</div>
