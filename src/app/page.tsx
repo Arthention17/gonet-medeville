@@ -11,6 +11,9 @@ import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
 import ChapterIntro from "@/components/ChapterIntro";
 import EditorialGallery from "@/components/EditorialGallery";
+import Hero from "@/components/Hero";
+import BottleCircle from "@/components/BottleCircle";
+import SoilCrossSection from "@/components/SoilCrossSection";
 import { wines } from "@/lib/wines";
 import { photos } from "@/lib/images";
 
@@ -165,19 +168,40 @@ export default function Home() {
         { clipPath: "circle(85% at 50% 50%)",
           scrollTrigger: { trigger: quoteSec.current, start: "top 55%", end: "center center", scrub: true } });
 
-      // Heritage swap
+      // Heritage — directional reveals + clip-path image swap
       if (heritageSec.current && heritageImg.current) {
         const rows = heritageSec.current.querySelectorAll<HTMLElement>("[data-heritage-row]");
         const images = heritageImg.current.querySelectorAll<HTMLElement>("[data-heritage-img]");
         rows.forEach((row, i) => {
+          const yearEl = row.querySelector<HTMLElement>("[data-h-year]");
+          const textEl = row.querySelector<HTMLElement>("[data-h-text]");
+          if (yearEl) gsap.set(yearEl, { x: -120, opacity: 0 });
+          if (textEl) gsap.set(textEl, { x: 80, opacity: 0 });
+          gsap.to(yearEl, {
+            x: 0, opacity: 1, duration: 1, ease: "power3.out",
+            scrollTrigger: { trigger: row, start: "top 80%", once: true },
+          });
+          gsap.to(textEl, {
+            x: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.18,
+            scrollTrigger: { trigger: row, start: "top 80%", once: true },
+          });
           ScrollTrigger.create({
             trigger: row, start: "top 65%", end: "bottom 35%",
             onEnter: () => swap(i), onEnterBack: () => swap(i),
           });
         });
+        gsap.set(images, { clipPath: "inset(0 100% 0 0)", opacity: 0 });
+        gsap.set(images[0], { clipPath: "inset(0 0% 0 0)", opacity: 1 });
         function swap(idx: number) {
           images.forEach((img, j) => {
-            gsap.to(img, { opacity: j === idx ? 1 : 0, scale: j === idx ? 1 : 1.05, duration: 0.9, ease: "power2.out" });
+            if (j === idx) {
+              gsap.fromTo(img,
+                { clipPath: "inset(0 100% 0 0)", opacity: 1 },
+                { clipPath: "inset(0 0% 0 0)", opacity: 1, duration: 1, ease: "power3.out" }
+              );
+            } else {
+              gsap.to(img, { opacity: 0, duration: 0.6, ease: "power2.out" });
+            }
           });
         }
       }
@@ -189,15 +213,30 @@ export default function Home() {
             delay: (i % 4) * 0.06 });
       });
 
-      gsap.utils.toArray<HTMLElement>("[data-heritage-row]").forEach(el => {
-        gsap.fromTo(el, { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.9, scrollTrigger: { trigger: el, start: "top 82%" } });
-      });
+      // (heritage rows now use directional reveals — see Heritage block above)
     });
 
     gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el => {
       gsap.fromTo(el, { opacity: 0, y: 25 },
         { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: el, start: "top 86%" } });
+    });
+
+    // Animated counters — count from 0 to target value when entering view
+    gsap.utils.toArray<HTMLElement>("[data-counter]").forEach(el => {
+      const raw = el.getAttribute("data-counter") || "0";
+      const num = parseFloat(raw.replace(/[^\d.]/g, ""));
+      const prefix = raw.startsWith("~") ? "~" : "";
+      const suffix = raw.endsWith("k") ? "k" : "";
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: num,
+        duration: 1.6,
+        ease: "power2.out",
+        scrollTrigger: { trigger: el, start: "top 85%", once: true },
+        onUpdate: () => {
+          el.textContent = prefix + Math.round(obj.v) + suffix;
+        },
+      });
     });
 
     return () => mm.revert();
@@ -214,48 +253,10 @@ export default function Home() {
       <main className="relative z-[1]" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.6s ease 0.3s" }}>
         <Nav />
 
-        {/* ═══════ HERO — refined, cinematic but not overwhelming ═══════ */}
-        <section ref={heroSec} className="h-screen relative overflow-hidden">
-          <div ref={heroImg} className="absolute inset-0 will-change-transform photo-grade">
-            <img src={photos.hero} alt="" className="w-full h-full object-cover" style={{ animation: "kenBurns 26s ease-in-out infinite alternate" }} />
-          </div>
-          {/* Cinematic overlay — darker bottom for legibility */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.25) 0%, rgba(14,14,12,0.0) 25%, rgba(14,14,12,0.55) 100%)" }} />
-          <div ref={heroOverlay} className="absolute inset-0 pointer-events-none opacity-0" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(14,14,12,0.4) 100%)" }} />
+        <Hero ref={heroSec} heroImg={heroImg} heroOverlay={heroOverlay} ready={ready} />
 
-          {/* Centred wordmark — refined size, breathes */}
-          <div className="relative z-10 h-full flex flex-col items-center justify-center px-8 text-center" style={{ color: "#F7F5F0" }}>
-            <div className="overflow-hidden mb-8" style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease 0.3s" }}>
-              <span className="font-mono inline-block text-[11px] tracking-[6px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
-                MDCCX &mdash; VIGNOBLES FAMILIAUX
-              </span>
-            </div>
 
-            <h1 className="font-serif font-light leading-[0.92] tracking-[-0.02em]" style={{ opacity: ready ? 1 : 0, transform: ready ? "translateY(0)" : "translateY(28px)", transition: "all 1.2s cubic-bezier(0.16,1,0.3,1) 0.6s" }}>
-              <span className="block" style={{ fontSize: "clamp(48px, 7vw, 110px)" }}>Gonet</span>
-              <span className="block italic mt-1" style={{ fontSize: "clamp(40px, 6vw, 90px)", color: "var(--gold)" }}>Medeville</span>
-            </h1>
-
-            <div className="w-12 h-[1px] mx-auto my-10" style={{ background: "var(--gold)", transform: ready ? "scaleX(1)" : "scaleX(0)", transition: "transform 1.4s cubic-bezier(0.16,1,0.3,1) 1.5s" }} />
-
-            <p className="font-serif italic font-light leading-[1.55] max-w-[440px]" style={{ fontSize: "clamp(15px, 1.3vw, 19px)", color: "rgba(247,245,240,0.85)", opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.7s" }}>
-              Trois siècles de patience, de la craie champenoise<br />aux graves bordelaises.
-            </p>
-
-            <div className="mt-10" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 1.9s" }}>
-              <button className="btn-fill" data-hover data-cursor="enter"><span>Découvrir</span></button>
-            </div>
-          </div>
-
-          {/* Scroll cue */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 2.1s" }}>
-            <span className="font-mono text-[9px] tracking-[3px]" style={{ color: "rgba(247,245,240,0.55)", fontFamily: "'DM Mono', monospace" }}>SCROLL</span>
-            <div className="w-[1px] h-10 relative overflow-hidden" style={{ background: "rgba(247,245,240,0.18)" }}>
-              <div className="w-full h-1/2 bg-[var(--gold)]" style={{ animation: "scrollLine 2.5s ease-in-out infinite" }} />
-            </div>
-          </div>
-        </section>
-
+        <div id="after-hero" />
         {/* ═══════ INTERMISSION — chapter I year ═══════ */}
         <ChapterIntro number="I" title="L'Origine" hint="Une famille, sept terroirs, trois siècles." variant="year" />
 
@@ -349,12 +350,12 @@ export default function Home() {
             <button className="btn-fill" data-hover data-cursor="open"><span>Fiche complète</span></button>
           </div>
           <div ref={bottleNum} className="absolute left-[6%] bottom-[12%] opacity-0 z-10">
-            <div className="font-serif text-[clamp(80px,11vw,180px)] font-light leading-none" style={{ color: "rgba(158,130,90,0.18)" }}>01</div>
+            <div className="font-serif text-[clamp(80px,11vw,180px)] font-light leading-none" style={{ color: "rgba(158,130,90,0.22)" }}>01</div>
           </div>
         </section>
 
         {/* ═══════ Wine fill ═══════ */}
-        <section ref={fillRef} className="py-28 md:py-36 px-8 md:px-16 relative overflow-hidden" style={{ background: "var(--warm)" }}>
+        <section ref={fillRef} className="py-20 md:py-24 px-8 md:px-16 relative overflow-hidden" style={{ background: "var(--warm)" }}>
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
             <div className="flex-shrink-0 w-[120px] h-[300px] relative" data-reveal>
               <svg viewBox="0 0 120 300" className="w-full h-full">
@@ -423,6 +424,9 @@ export default function Home() {
         {/* ═══════ Editorial wine gallery (no cards, focused) ═══════ */}
         <EditorialGallery wines={wines} />
 
+        {/* ═══════ Bottle circle — bottles regroup into a rotating ring ═══════ */}
+        <BottleCircle wines={wines} />
+
         <MarqueeXXL reverse />
 
         {/* ═══════ INTERMISSION — chapter V ═══════ */}
@@ -447,8 +451,8 @@ export default function Home() {
               <div className="md:col-span-7 space-y-20 md:space-y-28">
                 {heritage.map((item, i) => (
                   <div key={i} data-heritage-row className="flex items-start gap-6 md:gap-12">
-                    <span className="font-serif text-[clamp(48px,7vw,110px)] font-light leading-none flex-shrink-0 tracking-[-2px]" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
-                    <p className="font-sans text-[14px] leading-[1.95] max-w-[460px] pt-2 md:pt-4" style={{ color: "var(--ink2)" }}>{item.text}</p>
+                    <span data-h-year className="font-serif text-[clamp(48px,7vw,110px)] font-light leading-none flex-shrink-0 tracking-[-2px] will-change-transform" style={{ color: "rgba(158,130,90,0.32)" }}>{item.year}</span>
+                    <p data-h-text className="font-sans text-[14px] leading-[1.95] max-w-[460px] pt-2 md:pt-4 will-change-transform" style={{ color: "var(--ink2)" }}>{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -467,7 +471,7 @@ export default function Home() {
         </div>
 
         {/* ═══════ TERROIRS ═══════ */}
-        <section className="relative py-28 md:py-36 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
+        <section className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row gap-14 md:gap-24">
             <div className="flex-1" data-reveal>
               <span className="font-mono text-[11px] tracking-[1px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>Nos terroirs</span>
@@ -493,11 +497,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-24 px-8 md:px-16">
+        <SoilCrossSection />
+
+        <section className="py-20 px-8 md:px-16">
           <div className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
             {[{ n: "1710", l: "Fondation" }, { n: "7", l: "Domaines" }, { n: "43", l: "Hectares" }, { n: "~17k", l: "Caisses / an" }].map((s, i) => (
               <div key={i} className="text-center" data-reveal>
-                <div className="font-serif text-[clamp(36px,5vw,64px)] font-light leading-none tracking-[-1px]">{s.n}</div>
+                <div data-counter={s.n} className="font-serif text-[clamp(36px,5vw,64px)] font-light leading-none tracking-[-1px]">0</div>
                 <div className="font-mono text-[10px] tracking-[1px] mt-2.5" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{s.l}</div>
               </div>
             ))}
@@ -526,7 +532,7 @@ export default function Home() {
           </div>
           <div className="flex items-center justify-between pt-6" style={{ borderTop: "1px solid rgba(158,130,90,0.1)" }}>
             <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>L&apos;abus d&apos;alcool est dangereux pour la santé</span>
-            <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>© 2024 Gonet-Medeville</span>
+            <span className="font-mono text-[9px]" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>© 2026 Gonet-Medeville</span>
           </div>
         </footer>
       </main>
@@ -537,7 +543,7 @@ export default function Home() {
 function Stat({ n, l }: { n: string; l: string }) {
   return (
     <div className="text-center">
-      <div className="font-serif text-[40px] font-light tracking-[-1px]" style={{ color: "var(--ink)" }}>{n}</div>
+      <div data-counter={n} className="font-serif text-[40px] font-light tracking-[-1px]" style={{ color: "var(--ink)" }}>0</div>
       <div className="font-mono text-[9px] tracking-[1px] mt-1" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>{l}</div>
     </div>
   );

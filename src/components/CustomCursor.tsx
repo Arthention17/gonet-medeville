@@ -1,15 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Custom cursor with three layers:
- *  - Hard dot
- *  - Soft ring (scales over interactive elements)
- *  - "Liquid" trail of 6 blobs that follow with progressive lag, fed through an SVG
- *    feGaussianBlur + feColorMatrix "goo" filter so they merge into a wine-colored fluid.
- *
- * The ring grows + shows a label ("VIEW" / "DRAG" / "CHEERS") on tagged elements.
- */
 export default function CustomCursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
@@ -17,8 +8,18 @@ export default function CustomCursor() {
   const labelRef = useRef<HTMLSpanElement>(null);
   const [label, setLabel] = useState("");
   const [hovering, setHovering] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    const mq = window.matchMedia("(pointer: fine)");
+    const update = () => setEnabled(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     const target = { x: -100, y: -100 };
     const ringPos = { x: -100, y: -100 };
     const trailPos = Array.from({ length: 6 }, () => ({ x: -100, y: -100 }));
@@ -81,7 +82,9 @@ export default function CustomCursor() {
       window.removeEventListener("mousemove", onMove);
       mo.disconnect();
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <>
