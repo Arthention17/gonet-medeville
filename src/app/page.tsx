@@ -16,8 +16,8 @@ import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import { wines } from "@/lib/wines";
 
-// 3 cuvées dans la galerie (Gilette a son propre showcase au-dessus)
-const FEATURED_IDS = ["champ-alouette", "monplaisir", "eyrins"];
+// 4 cuvées dans la galerie (Gilette a son propre showcase au-dessus)
+const FEATURED_IDS = ["champ-alouette", "eyrins", "athenais", "monplaisir"];
 const featuredWines = FEATURED_IDS
   .map(id => wines.find(w => w.id === id))
   .filter((w): w is (typeof wines)[number] => Boolean(w));
@@ -110,31 +110,23 @@ export default function Home() {
           .to(caveText.current.querySelectorAll("[data-line]"), { y: 0, opacity: 1, stagger: 0.1, duration: 0.7, ease: "power2.out" }, "-=0.8");
       }
 
-      // Gilette showcase — bouteille centre → glisse gauche, texte apparaît droite
+      // Gilette showcase — NO PIN. Simple scroll-triggered reveal.
       const giletteSec = document.getElementById("gilette-showcase");
       const giletteBottle = document.getElementById("gilette-bottle");
       const giletteText = document.getElementById("gilette-text");
       if (giletteSec && giletteBottle && giletteText) {
-        gsap.set(giletteBottle, { scale: 1.15, x: "0%" });
-        gsap.set(giletteText, { opacity: 0, x: 60 });
-        const gtl = gsap.timeline({
-          scrollTrigger: {
-            trigger: giletteSec,
-            start: "top top",
-            end: "+=120%",
-            pin: true,
-            scrub: true,
-            anticipatePin: 1,
-          },
+        gsap.set(giletteBottle, { scale: 1.2, x: "0%" });
+        gsap.set(giletteText, { opacity: 0, x: 80 });
+        // Bouteille : zoom out + glisse à gauche quand la section entre
+        gsap.to(giletteBottle, {
+          scale: 1.0, x: "-28%", ease: "power3.out", duration: 1.6,
+          scrollTrigger: { trigger: giletteSec, start: "top 60%", once: true },
         });
-        // Phase 1: bouteille seule, zoom léger + halo s'intensifie
-        gtl.to(giletteBottle, { scale: 1.0, duration: 0.3 }, 0)
-        // Phase 2: bouteille glisse à gauche
-           .to(giletteBottle, { x: "-28%", duration: 0.4, ease: "power2.inOut" }, 0.3)
-        // Phase 3: texte apparaît
-           .to(giletteText, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.5)
-        // Phase 4: pause pour lire
-           .to({}, { duration: 0.3 }, 0.9);
+        // Texte : apparaît avec délai
+        gsap.to(giletteText, {
+          opacity: 1, x: 0, ease: "power3.out", duration: 1.2, delay: 0.5,
+          scrollTrigger: { trigger: giletteSec, start: "top 60%", once: true },
+        });
       }
 
       // Wine fill

@@ -38,7 +38,7 @@ const Hero = forwardRef<HTMLElement, Props>(function Hero({ heroImg, heroOverlay
     <section ref={sectionRef} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
       {/* Photo fantôme — à peine visible, donne de la texture */}
       <div ref={heroImg} className="absolute inset-0 will-change-transform" style={{ scale: "1.1" }}>
-        <img src={photos.sunset} alt="" className="w-full h-full object-cover" style={{ filter: "brightness(0.12) contrast(1.1) saturate(0.7)" }} />
+        <img src={photos.sunset} alt="" className="w-full h-full object-cover" style={{ filter: "brightness(0.18) contrast(1.05) saturate(0.7)" }} />
       </div>
 
       {/* Film grain overlay */}
