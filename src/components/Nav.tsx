@@ -5,39 +5,27 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const s = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", s, { passive: true });
+    return () => window.removeEventListener("scroll", s);
   }, []);
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-10 py-5 transition-all duration-500"
-      style={{
-        background: scrolled ? "rgba(250,249,246,0.9)" : "transparent",
-        backdropFilter: scrolled ? "blur(24px)" : "none",
-        borderBottom: scrolled
-          ? "1px solid rgba(181,147,90,0.1)"
-          : "1px solid transparent",
-      }}
-    >
-      <div className="font-serif text-base font-medium tracking-[3px]" data-hover>
-        G
-        <span className="text-[8px] text-gold mx-1 align-middle">◆</span>
-        M
-      </div>
+    <nav className="fixed top-0 left-0 right-0 z-[100] px-8 md:px-12 py-5 flex items-center justify-between transition-all duration-700" style={{
+      background: scrolled ? "rgba(247,245,240,0.92)" : "transparent",
+      backdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "none",
+      borderBottom: scrolled ? "1px solid rgba(158,130,90,0.08)" : "1px solid transparent",
+    }}>
+      <a href="#" className="flex items-baseline gap-1 group" data-hover>
+        <span className="font-serif text-lg tracking-[2px] font-medium">Gonet</span>
+        <span className="font-serif text-lg tracking-[2px] font-light italic text-[var(--gold)]">Médeville</span>
+      </a>
 
-      <div className="flex gap-7">
-        {["Maison", "Collection", "Terroirs", "Héritage"].map((label) => (
-          <span
-            key={label}
-            className="font-sans text-[11px] tracking-[2px] uppercase relative group"
-            style={{ color: "var(--ink2)" }}
-            data-hover
-          >
-            {label}
-            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gold scale-x-0 group-hover:scale-x-100 origin-right group-hover:origin-left transition-transform duration-500" />
-          </span>
+      <div className="hidden md:flex items-center gap-8">
+        {["La Maison","Collection","Terroirs","Contact"].map(l => (
+          <a key={l} href="#" className="link-hover font-sans text-[11px] tracking-[1.5px] uppercase text-[var(--ink2)] hover:text-[var(--ink)] transition-colors duration-300" data-hover>
+            {l}
+          </a>
         ))}
       </div>
     </nav>

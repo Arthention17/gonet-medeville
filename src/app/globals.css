@@ -2,69 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@300;400&display=swap');
 
 :root {
-  --gold: #B5935A;
-  --gold-light: #D4C5A9;
-  --ink: #111111;
-  --ink2: #555555;
-  --cream: #FAF9F6;
-  --bg: #FAF9F6;
+  --gold: #9E825A;
+  --gold-light: #C4B08A;
+  --ink: #0E0E0C;
+  --ink2: #6B6660;
+  --cream: #F7F5F0;
+  --bg: #F7F5F0;
+  --warm: #E8E2D6;
 }
 
-* { cursor: none; }
+::selection { background: var(--gold); color: white; }
+html { overflow-x: hidden; }
+body { background: var(--bg); color: var(--ink); overflow-x: hidden; font-family: 'Instrument Sans', sans-serif; -webkit-font-smoothing: antialiased; }
 
-::selection {
-  background: var(--gold);
-  color: white;
+@media (pointer: fine) {
+  * { cursor: none !important; }
 }
 
-html {
-  scroll-behavior: auto;
-  overflow-x: hidden;
-}
-
-body {
-  background: var(--bg);
-  color: var(--ink);
-  overflow-x: hidden;
-  font-family: 'Instrument Sans', sans-serif;
-}
-
-/* Grain overlay */
+/* Grain */
 .grain::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Custom cursor */
+/* Cursor */
 .cursor-ring {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 1.5px solid var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transition: transform 0.15s ease, width 0.3s, height 0.3s;
-  mix-blend-mode: difference;
-  transform: translate(-50%, -50%);
+  position: fixed; width: 36px; height: 36px; border: 1px solid var(--gold); border-radius: 50%;
+  pointer-events: none; z-index: 10000; transform: translate(-50%,-50%);
+  transition: width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, opacity 0.3s;
+  mix-blend-mode: difference; opacity: 0.6;
+}
+.cursor-dot {
+  position: fixed; width: 4px; height: 4px; background: var(--gold); border-radius: 50%;
+  pointer-events: none; z-index: 10001; transform: translate(-50%,-50%); opacity: 0.8;
 }
 
-.cursor-dot {
-  position: fixed;
-  width: 5px;
-  height: 5px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10001;
-  transform: translate(-50%, -50%);
+/* Marquee */
+@keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.animate-marquee { animation: marqueeScroll 30s linear infinite; }
+
+/* Scroll line */
+@keyframes scrollLine { 0%{transform:translateY(-100%);opacity:0} 50%{opacity:1} 100%{transform:translateY(200%);opacity:0} }
+
+/* Hover underline */
+.link-hover { position: relative; }
+.link-hover::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
 }
+.link-hover:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Button fill */
+.btn-fill {
+  position: relative; overflow: hidden; border: 1px solid var(--gold); background: transparent;
+  font-family: 'Instrument Sans', sans-serif; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; padding: 14px 40px; color: var(--gold);
+  transition: color 0.5s;
+}
+.btn-fill::before {
+  content: ''; position: absolute; inset: 0; background: var(--gold);
+  transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.btn-fill:hover { color: var(--bg); }
+.btn-fill:hover::before { transform: scaleY(1); transform-origin: top; }
+.btn-fill span { position: relative; z-index: 1; }
