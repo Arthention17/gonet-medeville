@@ -10,6 +10,7 @@ import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
 import EditorialGallery from "@/components/EditorialGallery";
 import Hero from "@/components/Hero";
+import ChapterIntro from "@/components/ChapterIntro";
 import Degustation from "@/components/Degustation";
 import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
@@ -202,6 +203,13 @@ export default function Home() {
         <Hero ref={heroSec} heroImg={heroImg} heroOverlay={heroOverlay} ready={ready} />
         <div id="after-hero" />
 
+        <ChapterIntro
+          number="I"
+          title="L'Origine"
+          hint="Une famille, sept terroirs, trois siècles. De Preignac au Mesnil-sur-Oger."
+          variant="wipe"
+        />
+
         {/* ═══════ CHAPITRE I · L'ORIGINE — Manifeste 1710 ═══════ */}
         <section id="manifeste" ref={manifesteSec} className="h-screen relative overflow-hidden" style={{ background: "var(--bg)" }}>
           <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-0">
@@ -236,6 +244,13 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <ChapterIntro
+          number="II"
+          title="Le Geste"
+          hint="Dans le silence des chais, la matière prend forme. Cuves béton, fûts de chêne, et le temps."
+          variant="reveal"
+        />
 
         {/* ═══════ CHAPITRE II · LE GESTE — Cave ═══════ */}
         <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
@@ -274,6 +289,13 @@ export default function Home() {
 
         {/* ═══════ Au fil des saisons (calendrier) ═══════ */}
         <CalendrierVigneron />
+
+        <ChapterIntro
+          number="III"
+          title="La Collection"
+          hint="Quatre appellations, sept domaines. Chaque cuvée raconte son terroir."
+          variant="split"
+        />
 
         {/* ═══════ CHAPITRE III · LA COLLECTION — Editorial gallery ═══════ */}
         <EditorialGallery wines={wines} />
@@ -359,6 +381,13 @@ export default function Home() {
 
         {/* ═══════ Press / awards ═══════ */}
         <Press />
+
+        <ChapterIntro
+          number="IV"
+          title="L'Héritage"
+          hint="Une lignée. Une promesse. Un futur. Depuis 1710, la patience comme philosophie."
+          variant="curtain"
+        />
 
         {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Heritage timeline ═══════ */}
         <section ref={heritageSec} className="py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--bg)" }}>

@@ -16,12 +16,12 @@ const months = [
 ];
 
 const monthImages = [
-  photos.sunset,       // JAN — winter chapelle / cold landscape
-  photos.rows,         // MAR — bare vines awakening
-  photos.vineyard2,    // MAI — flowering panorama
-  photos.grapes2,      // JUL — véraison, grain colour shift
-  photos.grapes,       // SEP — harvest hands
-  photos.cellar,       // NOV — rest, cellar
+  photos.vineyard2,    // JAN — vignoble-eglise, paysage hivernal
+  photos.rows,         // MAR — vignes-rangs, réveil
+  photos.vineyard1,    // MAI — vignoble panorama, vert
+  photos.grapes,       // JUL — vendanges/raisins
+  photos.sunset,       // SEP — vignoble-chapelle, automne
+  photos.cellar,       // NOV — cave-bouteilles
 ];
 
 /**
