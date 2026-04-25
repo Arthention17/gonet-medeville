@@ -273,6 +273,60 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ═══════ GILETTE SHOWCASE — Dark cinematic reveal ═══════ */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: "#0E0E0C" }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 60%, rgba(158,130,90,0.06) 0%, transparent 55%)" }} />
+          <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+            {/* Bouteille */}
+            <div className="flex justify-center" data-reveal>
+              <div className="relative">
+                <img
+                  src="/bottles/gilette.png"
+                  alt="Château Gilette"
+                  className="h-[50vh] md:h-[65vh] w-auto object-contain select-none"
+                  style={{ filter: "drop-shadow(0 40px 80px rgba(158,130,90,0.25))" }}
+                />
+                {/* Halo doré derrière la bouteille */}
+                <div className="absolute inset-0 -z-10 blur-[80px] opacity-20" style={{ background: "radial-gradient(ellipse, #9E825A, transparent 70%)" }} />
+              </div>
+            </div>
+            {/* Texte */}
+            <div style={{ color: "#F7F5F0" }} data-reveal>
+              <span className="font-mono text-[10px] tracking-[5px] block mb-6" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+                LE VIN EMBLÉMATIQUE
+              </span>
+              <h2 className="font-serif font-light leading-[1] tracking-[-2px] mb-3" style={{ fontSize: "clamp(42px, 5vw, 80px)" }}>
+                Château
+              </h2>
+              <h2 className="font-serif italic font-light leading-[1] tracking-[-2px] mb-8" style={{ fontSize: "clamp(52px, 6vw, 96px)", color: "var(--gold)" }}>
+                Gilette
+              </h2>
+              <p className="font-serif italic text-[16px] mb-6" style={{ color: "rgba(247,245,240,0.7)" }}>
+                Crème de Tête · Sauternes · 1989
+              </p>
+              <p className="font-sans text-[14px] leading-[2] mb-10" style={{ color: "rgba(247,245,240,0.6)" }}>
+                L&apos;antiquaire du Sauternes. Vieilli vingt ans en cuves béton centenaires avant sa mise en bouteille — une patience unique au monde. Seulement 5&nbsp;000 bouteilles par millésime.
+              </p>
+              <div className="flex gap-12 mb-10">
+                <div>
+                  <div data-counter="20" className="font-serif text-[36px] font-light" style={{ color: "var(--gold)" }}>0</div>
+                  <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.45)", fontFamily: "'DM Mono', monospace" }}>ANS EN CUVES</span>
+                </div>
+                <div className="w-[1px] h-14" style={{ background: "rgba(158,130,90,0.2)" }} />
+                <div>
+                  <div data-counter="5k" className="font-serif text-[36px] font-light" style={{ color: "var(--gold)" }}>0</div>
+                  <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.45)", fontFamily: "'DM Mono', monospace" }}>BOUTEILLES / AN</span>
+                </div>
+                <div className="w-[1px] h-14" style={{ background: "rgba(158,130,90,0.2)" }} />
+                <div>
+                  <div className="font-serif text-[36px] font-light" style={{ color: "var(--gold)" }}>90%</div>
+                  <span className="font-mono text-[9px] tracking-[2px]" style={{ color: "rgba(247,245,240,0.45)", fontFamily: "'DM Mono', monospace" }}>SÉMILLON</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ═══════ Au fil des saisons (calendrier) ═══════ */}
         <CalendrierVigneron />
 
