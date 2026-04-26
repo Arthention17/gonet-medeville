@@ -2,6 +2,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { photos } from "@/lib/images";
+import MagneticButton from "@/components/MagneticButton";
 
 interface Props {
   heroImg: React.RefObject<HTMLDivElement>;
@@ -86,9 +87,9 @@ const Hero = forwardRef<HTMLElement, Props>(function Hero({ heroImg, heroOverlay
         </div>
 
         <div className="mt-12" style={{ opacity: ready ? 1 : 0, transition: "opacity 1s ease 2.2s" }}>
-          <button className="btn-fill" data-hover data-cursor="enter" onClick={onDiscover} style={{ borderColor: "rgba(158,130,90,0.5)", color: "#F7F5F0" }}>
-            <span>Découvrir la maison</span>
-          </button>
+          <MagneticButton className="btn-fill" onClick={onDiscover} style={{ borderColor: "rgba(158,130,90,0.5)", color: "#F7F5F0" }}>
+            Découvrir la maison
+          </MagneticButton>
         </div>
       </div>
 

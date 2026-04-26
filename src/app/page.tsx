@@ -17,6 +17,11 @@ import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
 import WaveDivider from "@/components/WaveDivider";
 import GoldParticles from "@/components/GoldParticles";
+import MagneticButton from "@/components/MagneticButton";
+import KineticText from "@/components/KineticText";
+import FillText from "@/components/FillText";
+import ImageDistortion from "@/components/ImageDistortion";
+import Ambilight from "@/components/Ambilight";
 import { wines } from "@/lib/wines";
 
 // 4 cuvées dans la galerie (Gilette a son propre showcase au-dessus)
@@ -187,6 +192,7 @@ export default function Home() {
       <SmoothScroll />
       <CustomCursor />
       <GoldParticles />
+      <Ambilight />
       <Preloader onComplete={onDone} />
 
       <BubbleField />
@@ -247,7 +253,7 @@ export default function Home() {
         />
 
         {/* ═══════ CHAPITRE II · LE GESTE — Cave ═══════ */}
-        <section ref={caveSec} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
+        <section ref={caveSec} data-ambilight="rgba(91,26,46,0.06)" className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
           <div ref={caveBg} className="absolute inset-0 will-change-[clip-path] photo-grade">
             <img src={photos.cellar} alt="Cave de Gilette" className="w-full h-full object-cover" />
             <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.75) 100%)" }} />
@@ -277,7 +283,7 @@ export default function Home() {
               <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>500 FÛTS DE CHÊNE</span>
               <span className="font-mono text-[10px] tracking-[2px]" style={{ fontFamily: "'DM Mono', monospace" }}>14°C CONSTANT</span>
             </div>
-            <div data-line><button onClick={goToContact} className="btn-fill" data-hover data-cursor="visit" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}><span>Visiter les chais</span></button></div>
+            <div data-line><MagneticButton onClick={goToContact} className="btn-fill" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}>Visiter les chais</MagneticButton></div>
           </div>
         </section>
 
@@ -381,7 +387,7 @@ export default function Home() {
         />
 
         {/* ═══════ CHAPITRE IV · L'HÉRITAGE — Vertical timeline ═══════ */}
-        <section ref={heritageSec} className="py-24 md:py-32 px-8 md:px-16 lg:px-24 relative" style={{ background: "var(--bg)" }}>
+        <section ref={heritageSec} data-ambilight="rgba(158,130,90,0.05)" className="py-24 md:py-32 px-8 md:px-16 lg:px-24 relative" style={{ background: "var(--bg)" }}>
           {/* Vertical gold timeline line */}
           <div className="absolute left-1/2 top-0 bottom-0 w-[1px] hidden md:block" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(158,130,90,0.15) 15%, rgba(158,130,90,0.15) 85%, transparent 100%)" }} />
 
@@ -390,9 +396,9 @@ export default function Home() {
               <span className="font-mono text-[11px] tracking-[3px] block mb-4" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
                 CHAPITRE IV — L&apos;HÉRITAGE
               </span>
-              <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(34px, 4.5vw, 60px)" }}>
-                Une lignée, <span className="italic" style={{ color: "var(--gold)" }} data-gold-sparkle>une promesse</span>.
-              </h2>
+              <KineticText as="h2" className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(34px, 4.5vw, 60px)" }} intensity={18}>
+                Une lignée, une promesse.
+              </KineticText>
             </div>
 
             <div className="flex flex-col gap-24 md:gap-0">
@@ -407,13 +413,9 @@ export default function Home() {
 
                     {/* Image side */}
                     <div className={`relative overflow-hidden photo-grade mb-6 md:mb-0 ${isRight ? "md:order-2" : "md:order-1"}`} data-reveal>
-                      <div className="aspect-[16/10] md:aspect-[4/3] relative overflow-hidden group">
-                        <img src={item.image} alt={item.year} className="w-full h-[115%] object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06] absolute top-[-7.5%] left-0" data-speed="-0.08" style={{ willChange: "transform" }} />
-                        <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.05) 50%)" }} />
-                        {/* Year overlay on the image */}
-                        <div className="absolute bottom-5 left-6">
-                          <span className="font-serif text-[clamp(36px,5vw,72px)] font-light text-white/90 leading-none tracking-[-2px]" style={{ textShadow: "0 2px 20px rgba(14,14,12,0.5)" }}>{item.year}</span>
-                        </div>
+                      <ImageDistortion src={item.image} alt={item.year} className="aspect-[16/10] md:aspect-[4/3]" />
+                      <div className="absolute bottom-5 left-6 z-10">
+                        <span className="font-serif text-[clamp(36px,5vw,72px)] font-light text-white/90 leading-none tracking-[-2px]" style={{ textShadow: "0 2px 20px rgba(14,14,12,0.5)" }}>{item.year}</span>
                       </div>
                     </div>
 
@@ -448,13 +450,13 @@ export default function Home() {
         {/* Wave transition → Terroirs */}
         <WaveDivider from="var(--bg)" to="var(--ink)" />
         {/* ═══════ TERROIRS ═══════ */}
-        <section id="terroirs" className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }} data-cursor-zone="dark">
+        <section id="terroirs" data-ambilight="rgba(14,14,12,0.08)" className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }} data-cursor-zone="dark">
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row gap-14 md:gap-24">
             <div className="flex-1" data-reveal>
               <span className="font-mono text-[11px] tracking-[3px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>NOS TERROIRS</span>
-              <SplitText as="h2" by="word" className="font-serif text-[clamp(32px,4vw,56px)] font-light leading-[1.1] mb-8 tracking-[-1px]">
+              <FillText as="h2" className="font-serif text-[clamp(32px,4vw,56px)] font-light leading-[1.1] mb-8 tracking-[-1px]" fillColor="#F7F5F0" strokeColor="rgba(247,245,240,0.2)">
                 Quatre appellations, un même geste.
-              </SplitText>
+              </FillText>
               <p className="font-sans text-[14px] leading-[1.95] max-w-[400px]" style={{ color: "rgba(247,245,240,0.55)" }}>
                 Chaque domaine est le fruit d&apos;un terroir singulier, façonné par la géologie et le savoir-faire humain. La complémentarité des terroirs — du calcaire champenois aux graves bordelaises — fait la singularité de la maison.
               </p>
@@ -478,7 +480,7 @@ export default function Home() {
         </section>
 
         {/* ═══════ CONTACT / CTA — full-bleed vineyard ═══════ */}
-        <section id="contact" className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <section id="contact" className="relative h-[80vh] flex items-center justify-center overflow-hidden" data-cursor-zone="dark" data-ambilight="rgba(158,130,90,0.05)">
           <img src={photos.julieXavierPortrait} alt="" className="absolute inset-0 w-full h-full object-cover photo-grade" data-speed="-0.08" style={{ filter: "brightness(0.45)", objectPosition: "center 25%" }} />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,14,12,0.4) 0%, rgba(14,14,12,0.2) 50%, rgba(14,14,12,0.55) 100%)" }} />
           <div className="relative z-10 text-center max-w-[640px] px-8" style={{ color: "#F7F5F0" }}>
@@ -492,17 +494,9 @@ export default function Home() {
             <div className="font-mono text-[11px] tracking-[2px] mb-10" style={{ color: "rgba(247,245,240,0.7)", fontFamily: "'DM Mono', monospace" }}>
               +33 5 56 76 28 44 · CONTACT@GONET-MEDEVILLE.COM
             </div>
-            <a
-              href="https://www.gonet-medeville.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-fill inline-block"
-              data-hover
-              data-cursor="open"
-              style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}
-            >
-              <span>Visiter le site officiel</span>
-            </a>
+            <MagneticButton href="https://www.gonet-medeville.com" className="btn-fill inline-block" style={{ borderColor: "var(--gold)", color: "#F7F5F0" }}>
+              Visiter le site officiel
+            </MagneticButton>
           </div>
         </section>
 
@@ -536,8 +530,8 @@ export default function Home() {
   );
 }
 
-function goToContact(e: React.MouseEvent) {
-  e.preventDefault();
+function goToContact(e?: React.MouseEvent) {
+  if (e) e.preventDefault();
   const el = document.getElementById("contact");
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }

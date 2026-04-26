@@ -82,7 +82,7 @@ export default function GiletteShowcase() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }} data-cursor-zone="dark">
+    <section ref={sectionRef} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }} data-cursor-zone="dark" data-ambilight="rgba(212,160,23,0.05)">
       <div ref={glowRef} className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(158,130,90,0.04) 0%, transparent 55%)" }} />
 
       <div ref={bottleRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 will-change-transform"
