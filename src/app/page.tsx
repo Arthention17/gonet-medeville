@@ -187,7 +187,7 @@ export default function Home() {
       <SmoothScroll />
       <CustomCursor />
       <GoldParticles />
-      {!ready && <Preloader onComplete={onDone} />}
+      <Preloader onComplete={onDone} />
 
       <BubbleField />
 
@@ -408,7 +408,7 @@ export default function Home() {
                     {/* Image side */}
                     <div className={`relative overflow-hidden photo-grade mb-6 md:mb-0 ${isRight ? "md:order-2" : "md:order-1"}`} data-reveal>
                       <div className="aspect-[16/10] md:aspect-[4/3] relative overflow-hidden group">
-                        <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06]" data-speed="-0.06" style={{ willChange: "transform" }} />
+                        <img src={item.image} alt={item.year} className="w-full h-[115%] object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06] absolute top-[-7.5%] left-0" data-speed="-0.08" style={{ willChange: "transform" }} />
                         <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.05) 50%)" }} />
                         {/* Year overlay on the image */}
                         <div className="absolute bottom-5 left-6">

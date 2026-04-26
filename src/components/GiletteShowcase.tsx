@@ -92,7 +92,7 @@ export default function GiletteShowcase() {
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
           const img = e.currentTarget.querySelector("img");
-          if (img) gsap.to(img, { rotateY: x * 14, rotateX: -y * 9, duration: 0.8, ease: "power3.out" });
+          if (img) gsap.to(img, { rotateY: x * 25, rotateX: -y * 15, duration: 0.8, ease: "power3.out" });
         }}
         onMouseLeave={(e) => {
           const img = e.currentTarget.querySelector("img");

@@ -9,13 +9,11 @@ interface Particle {
 }
 
 /**
- * Lightweight canvas overlay. When cursor hovers [data-gold-sparkle] elements,
- * tiny gold particles burst from the cursor position.
+ * Gold particles that continuously emit from visible [data-gold-sparkle] elements.
+ * No hover needed — particles float up from the text like champagne bubbles.
  */
 export default function GoldParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particles = useRef<Particle[]>([]);
-  const mouse = useRef({ x: -100, y: -100, active: false });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -30,63 +28,72 @@ export default function GoldParticles() {
     resize();
     window.addEventListener("resize", resize);
 
-    const onMove = (e: MouseEvent) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
+    const particles: Particle[] = [];
+    const visibleEls = new Set<Element>();
 
-      if (mouse.current.active && Math.random() > 0.6) {
-        for (let i = 0; i < 2; i++) {
-          particles.current.push({
-            x: e.clientX + (Math.random() - 0.5) * 12,
-            y: e.clientY + (Math.random() - 0.5) * 12,
-            vx: (Math.random() - 0.5) * 2,
-            vy: -Math.random() * 2.5 - 0.5,
-            life: 0,
-            maxLife: 30 + Math.random() * 30,
-            size: 1 + Math.random() * 2,
-          });
-        }
-      }
-    };
-
-    const onEnter = () => { mouse.current.active = true; };
-    const onLeave = () => { mouse.current.active = false; };
-
-    window.addEventListener("mousemove", onMove);
+    // Track which [data-gold-sparkle] elements are visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) visibleEls.add(e.target);
+        else visibleEls.delete(e.target);
+      });
+    }, { threshold: 0.3 });
 
     const observe = () => {
-      document.querySelectorAll("[data-gold-sparkle]").forEach(el => {
-        el.removeEventListener("mouseenter", onEnter);
-        el.removeEventListener("mouseleave", onLeave);
-        el.addEventListener("mouseenter", onEnter);
-        el.addEventListener("mouseleave", onLeave);
-      });
+      document.querySelectorAll("[data-gold-sparkle]").forEach(el => observer.observe(el));
     };
     observe();
     const mo = new MutationObserver(observe);
     mo.observe(document.body, { childList: true, subtree: true });
 
     let raf = 0;
+    let frame = 0;
+
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const ps = particles.current;
+      frame++;
 
-      for (let i = ps.length - 1; i >= 0; i--) {
-        const p = ps[i];
+      // Emit particles from visible gold text elements every ~8 frames
+      if (frame % 8 === 0) {
+        visibleEls.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.width === 0) return;
+
+          // Random position along the text
+          const x = rect.left + Math.random() * rect.width;
+          const y = rect.top + Math.random() * rect.height * 0.5;
+
+          particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: -Math.random() * 1.5 - 0.3,
+            life: 0,
+            maxLife: 50 + Math.random() * 40,
+            size: 0.8 + Math.random() * 1.8,
+          });
+        });
+      }
+
+      // Keep max ~80 particles
+      while (particles.length > 80) particles.shift();
+
+      // Render
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.03; // gravity
+        p.vx += (Math.random() - 0.5) * 0.1; // drift
         p.life++;
 
         const progress = p.life / p.maxLife;
-        const alpha = progress < 0.3 ? progress / 0.3 : 1 - (progress - 0.3) / 0.7;
+        const alpha = progress < 0.2 ? progress / 0.2 : 1 - (progress - 0.2) / 0.8;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (1 - progress * 0.5), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(158, 130, 90, ${alpha * 0.7})`;
+        ctx.arc(p.x, p.y, p.size * (1 - progress * 0.4), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(158, 130, 90, ${alpha * 0.55})`;
         ctx.fill();
 
-        if (p.life >= p.maxLife) ps.splice(i, 1);
+        if (p.life >= p.maxLife) particles.splice(i, 1);
       }
 
       raf = requestAnimationFrame(loop);
@@ -96,16 +103,10 @@ export default function GoldParticles() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMove);
+      observer.disconnect();
       mo.disconnect();
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[9996]"
-      aria-hidden
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9996]" aria-hidden />;
 }
