@@ -15,6 +15,8 @@ import Degustation from "@/components/Degustation";
 import GiletteShowcase from "@/components/GiletteShowcase";
 import CalendrierVigneron from "@/components/CalendrierVigneron";
 import Press from "@/components/Press";
+import WaveDivider from "@/components/WaveDivider";
+import GoldParticles from "@/components/GoldParticles";
 import { wines } from "@/lib/wines";
 
 // 4 cuvées dans la galerie (Gilette a son propre showcase au-dessus)
@@ -184,6 +186,7 @@ export default function Home() {
     <>
       <SmoothScroll />
       <CustomCursor />
+      <GoldParticles />
       {!ready && <Preloader onComplete={onDone} />}
 
       <BubbleField />
@@ -218,7 +221,7 @@ export default function Home() {
                 </div>
                 <h2 className="font-serif text-[clamp(38px,5vw,68px)] font-light leading-[1.02] mb-7 tracking-[-1.5px]">
                   <span className="block overflow-hidden"><span data-line className="inline-block">Trois siècles</span></span>
-                  <span className="block overflow-hidden"><span data-line className="inline-block italic" style={{ color: "var(--gold)" }}>de patience</span></span>
+                  <span className="block overflow-hidden"><span data-line className="inline-block italic" style={{ color: "var(--gold)" }} data-gold-sparkle>de patience</span></span>
                   <span className="block overflow-hidden"><span data-line className="inline-block">incarnée.</span></span>
                 </h2>
                 <div className="overflow-hidden">
@@ -264,7 +267,7 @@ export default function Home() {
             </div>
             <h2 className="font-serif text-[clamp(34px,4.5vw,60px)] font-light leading-[1.05] mb-7 tracking-[-1px]">
               <span data-line className="block">Les bouteilles dorment.</span>
-              <span data-line className="block italic" style={{ color: "var(--gold)" }}>Nous veillons.</span>
+              <span data-line className="block italic" style={{ color: "var(--gold)" }} data-gold-sparkle>Nous veillons.</span>
             </h2>
             <p data-line className="font-sans text-[14px] leading-[1.9] mb-6" style={{ color: "rgba(247,245,240,0.72)" }}>
               Dans le silence des chais, Julie et Xavier prolongent un héritage. Pas d&apos;artifice, pas de hâte — la lumière, la fraîcheur, et le temps font le reste.
@@ -368,6 +371,7 @@ export default function Home() {
 
         {/* ═══════ Press / awards ═══════ */}
         <Press />
+        <WaveDivider from="#0E0E0C" to="var(--bg)" />
 
         <ChapterIntro
           number="IV"
@@ -387,7 +391,7 @@ export default function Home() {
                 CHAPITRE IV — L&apos;HÉRITAGE
               </span>
               <h2 className="font-serif font-light tracking-[-1px]" style={{ fontSize: "clamp(34px, 4.5vw, 60px)" }}>
-                Une lignée, <span className="italic" style={{ color: "var(--gold)" }}>une promesse</span>.
+                Une lignée, <span className="italic" style={{ color: "var(--gold)" }} data-gold-sparkle>une promesse</span>.
               </h2>
             </div>
 
@@ -404,7 +408,7 @@ export default function Home() {
                     {/* Image side */}
                     <div className={`relative overflow-hidden photo-grade mb-6 md:mb-0 ${isRight ? "md:order-2" : "md:order-1"}`} data-reveal>
                       <div className="aspect-[16/10] md:aspect-[4/3] relative overflow-hidden group">
-                        <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06]" />
+                        <img src={item.image} alt={item.year} className="w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06]" data-speed="-0.06" style={{ willChange: "transform" }} />
                         <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.05) 50%)" }} />
                         {/* Year overlay on the image */}
                         <div className="absolute bottom-5 left-6">
@@ -441,8 +445,10 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Wave transition → Terroirs */}
+        <WaveDivider from="var(--bg)" to="var(--ink)" />
         {/* ═══════ TERROIRS ═══════ */}
-        <section id="terroirs" className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }}>
+        <section id="terroirs" className="relative py-20 md:py-24 px-8 md:px-16 lg:px-24" style={{ background: "var(--ink)", color: "#F7F5F0" }} data-cursor-zone="dark">
           <div className="max-w-[1100px] mx-auto flex flex-col md:flex-row gap-14 md:gap-24">
             <div className="flex-1" data-reveal>
               <span className="font-mono text-[11px] tracking-[3px] text-[var(--gold)] block mb-6" style={{ fontFamily: "'DM Mono', monospace" }}>NOS TERROIRS</span>

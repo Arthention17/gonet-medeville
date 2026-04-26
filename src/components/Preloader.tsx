@@ -1,117 +1,137 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
 
-interface Props {
-  onComplete: () => void;
-}
+interface Props { onComplete: () => void; }
 
-/**
- * Preloader: an elegant wine glass that fills with red wine.
- * - Glass is a single tuned SVG (bowl + stem + base).
- * - Wine fill is a clipped rect whose y rises over ~2.4s.
- * - Wine surface is an animated sine path for a live ripple.
- * - When the bowl is full, a curtain clip-path slides up to reveal the page.
- */
 export default function Preloader({ onComplete }: Props) {
-  const [hiding, setHiding] = useState(false);
-  const fillRef = useRef<SVGRectElement>(null);
-  const surfaceRef = useRef<SVGPathElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const glassRef = useRef<SVGPathElement>(null);
+  const wineRef = useRef<SVGPathElement>(null);
+  const logoRef = useRef<HTMLImageElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const curtainRef = useRef<HTMLDivElement>(null);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const start = performance.now();
-    const duration = 2400;
-    let raf = 0;
+    const glass = glassRef.current;
+    const wine = wineRef.current;
+    const logo = logoRef.current;
+    const text = textRef.current;
+    const curtain = curtainRef.current;
+    const root = rootRef.current;
+    if (!glass || !wine || !logo || !text || !curtain || !root) return;
 
-    const animate = (t: number) => {
-      const elapsed = t - start;
-      const progress = Math.min(1, elapsed / duration);
-      const eased = 1 - Math.pow(1 - progress, 3);
+    // Glass stroke draw
+    const glassLen = glass.getTotalLength();
+    gsap.set(glass, { strokeDasharray: glassLen, strokeDashoffset: glassLen });
+    gsap.set(wine, { scaleY: 0, transformOrigin: "center bottom" });
+    gsap.set(logo, { opacity: 0, scale: 0.8 });
+    gsap.set(text, { opacity: 0, y: 15 });
 
-      // y: 100 (empty) -> 32 (filled to near rim)
-      const yTop = 100 - eased * 68;
-      if (fillRef.current) fillRef.current.setAttribute("y", String(yTop));
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setDone(true);
+        setTimeout(onComplete, 100);
+      },
+    });
 
-      // surface ripple — animated sine
-      if (surfaceRef.current) {
-        const w = 70;
-        const cx = 60;
-        const left = cx - w / 2;
-        const phase = elapsed / 220;
-        const amp = 1.4 + Math.sin(elapsed / 600) * 0.3;
-        let d = `M ${left} ${yTop} `;
-        for (let i = 0; i <= 30; i++) {
-          const t2 = i / 30;
-          const x = left + t2 * w;
-          const y = yTop + Math.sin(t2 * Math.PI * 5 + phase) * amp;
-          d += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
-        }
-        surfaceRef.current.setAttribute("d", d);
-      }
+    // Phase 1: Zalto glass draws itself (stroke animation)
+    tl.to(glass, { strokeDashoffset: 0, duration: 2.2, ease: "power2.inOut" }, 0.3)
 
-      if (progress < 1) {
-        raf = requestAnimationFrame(animate);
-      } else {
-        setTimeout(() => setHiding(true), 350);
-        setTimeout(() => onComplete(), 1450);
-      }
-    };
+    // Phase 2: Wine fills the glass from bottom
+      .to(wine, { scaleY: 1, duration: 1.0, ease: "power2.out" }, 1.8)
 
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
+    // Phase 3: Glass + wine fade, logo appears
+      .to([glass, wine], { opacity: 0, duration: 0.5 }, 3.2)
+      .to(logo, { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 3.4)
+      .to(text, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 3.8)
+
+    // Phase 4: Pause
+      .to({}, { duration: 0.6 }, 4.4)
+
+    // Phase 5: Curtain lifts
+      .to(curtain, { yPercent: -100, duration: 1.0, ease: "power4.inOut" }, 5.0);
+
+    return () => { tl.kill(); };
   }, [onComplete]);
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      ref={rootRef}
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
       style={{
-        background: "var(--bg)",
-        clipPath: hiding ? "inset(0 0 100% 0)" : "inset(0 0 0 0)",
-        transition: hiding ? "clip-path 1.2s cubic-bezier(0.76, 0, 0.24, 1)" : "none",
-        pointerEvents: hiding ? "none" : "all",
+        background: "#0E0E0C",
+        pointerEvents: done ? "none" : "auto",
+        opacity: done ? 0 : 1,
+        transition: "opacity 0.5s ease 0.2s",
       }}
     >
-      <svg viewBox="0 0 120 220" width="180" height="330" className="mb-10" aria-hidden>
-        <defs>
-          <clipPath id="bowlInterior">
-            <path d="M 27 24 Q 27 100 60 110 Q 93 100 93 24 Z" />
-          </clipPath>
-          <linearGradient id="wineGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#7d1e36" />
-            <stop offset="60%" stopColor="#4a0d1a" />
-            <stop offset="100%" stopColor="#2a0510" />
-          </linearGradient>
-          <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,0.05)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.18)" />
-          </linearGradient>
-        </defs>
+      {/* Zalto Bordeaux glass SVG */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <svg viewBox="0 0 200 520" width="120" height="312" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Glass outline — Zalto Bordeaux shape */}
+          <path
+            ref={glassRef}
+            d="
+              M 68 495 L 132 495
+              M 100 495 L 100 350
+              M 100 350 C 60 340, 38 280, 35 220
+              C 32 160, 42 100, 55 65
+              C 62 45, 72 32, 82 26
+              C 90 22, 95 20, 100 20
+              C 105 20, 110 22, 118 26
+              C 128 32, 138 45, 145 65
+              C 158 100, 168 160, 165 220
+              C 162 280, 140 340, 100 350
+            "
+            stroke="var(--gold)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.8"
+          />
+          {/* Wine fill shape — inside the bowl */}
+          <path
+            ref={wineRef}
+            d="
+              M 42 240 C 44 200, 50 170, 60 145
+              C 70 125, 80 115, 100 112
+              C 120 115, 130 125, 140 145
+              C 150 170, 156 200, 158 240
+              C 155 280, 140 320, 100 340
+              C 60 320, 45 280, 42 240 Z
+            "
+            fill="rgba(180,80,60,0.6)"
+            opacity="1"
+          />
+        </svg>
+      </div>
 
-        {/* Wine fill clipped to bowl shape */}
-        <g clipPath="url(#bowlInterior)">
-          <rect ref={fillRef} x="20" y="100" width="80" height="120" fill="url(#wineGrad)" />
-          <path ref={surfaceRef} d="M 25 100 L 95 100" fill="none" stroke="rgba(255,210,180,0.28)" strokeWidth="0.7" />
-        </g>
+      {/* Logo reveal */}
+      <img
+        ref={logoRef}
+        src="/logo.png"
+        alt="Gonet-Medeville"
+        width={100}
+        height={100}
+        className="absolute w-[80px] h-[80px] md:w-[100px] md:h-[100px]"
+        style={{ filter: "invert(1) brightness(1.3) drop-shadow(0 0 30px rgba(158,130,90,0.3))" }}
+      />
 
-        {/* Glass outline (bowl + rim) */}
-        <path d="M 27 24 Q 27 100 60 110 Q 93 100 93 24" fill="none" stroke="var(--ink)" strokeWidth="0.9" opacity="0.85" />
-        <ellipse cx="60" cy="24" rx="33" ry="3.2" fill="none" stroke="var(--ink)" strokeWidth="0.9" opacity="0.55" />
-        <path d="M 31 30 Q 30 80 56 105" fill="none" stroke="url(#glassGrad)" strokeWidth="2" opacity="0.7" />
+      {/* Text sous le logo */}
+      <div ref={textRef} className="absolute" style={{ top: "calc(50% + 70px)" }}>
+        <span className="font-mono text-[9px] tracking-[6px]" style={{ color: "var(--gold)", fontFamily: "'DM Mono', monospace" }}>
+          GONET-MEDEVILLE
+        </span>
+      </div>
 
-        {/* Stem */}
-        <line x1="60" y1="110" x2="60" y2="180" stroke="var(--ink)" strokeWidth="0.9" opacity="0.7" />
-
-        {/* Base */}
-        <ellipse cx="60" cy="180" rx="22" ry="2.2" fill="none" stroke="var(--ink)" strokeWidth="0.9" opacity="0.45" />
-        <ellipse cx="60" cy="184" rx="22" ry="2.6" fill="none" stroke="var(--ink)" strokeWidth="0.9" opacity="0.75" />
-      </svg>
-
-      <span className="font-serif tracking-[6px] mb-2 font-light" style={{ color: "var(--ink)", fontSize: "clamp(20px, 2.2vw, 26px)" }}>
-        GONET <span className="italic" style={{ color: "var(--gold)" }}>·</span> MEDEVILLE
-      </span>
-      <span className="font-mono text-[10px] tracking-[4px] uppercase" style={{ color: "var(--ink2)", fontFamily: "'DM Mono', monospace" }}>
-        MDCCX
-      </span>
+      {/* Curtain — slides up to reveal the site */}
+      <div
+        ref={curtainRef}
+        className="absolute inset-0"
+        style={{ background: "#0E0E0C" }}
+      />
     </div>
   );
 }

@@ -149,7 +149,20 @@ export default function EditorialGallery({ wines }: Props) {
         {wines.map((wine, idx) => (
           <div key={wine.id} data-frame className="flex-shrink-0 h-full flex items-center justify-center relative" style={{ width: "60vw" }}>
             <div className="w-full max-w-[1100px] mx-auto flex items-center gap-[clamp(28px,3vw,72px)] px-[clamp(20px,2vw,40px)]">
-              <div data-bottle className="flex-shrink-0 will-change-transform" style={{ transformOrigin: "center center" }}>
+              <div data-bottle className="flex-shrink-0 will-change-transform" style={{ transformOrigin: "center center", perspective: "800px" }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - rect.left) / rect.width - 0.5;
+                  const y = (e.clientY - rect.top) / rect.height - 0.5;
+                  const img = e.currentTarget.querySelector("img");
+                  if (img) gsap.to(img, { rotateY: x * 14, rotateX: -y * 9, duration: 0.8, ease: "power3.out" });
+                }}
+                onMouseLeave={(e) => {
+                  const img = e.currentTarget.querySelector("img");
+                  if (img) gsap.to(img, { rotateY: 0, rotateX: 0, duration: 1.4, ease: "power3.out" });
+                }}
+                data-cursor="découvrir"
+              >
                 <Image src={wine.image} alt={wine.name} width={240} height={620} className="object-contain select-none pointer-events-none" style={{ maxHeight: "62vh", width: "auto", filter: "drop-shadow(0 30px 60px rgba(14,14,12,0.25))" }} />
               </div>
               <div data-text className="flex-1 max-w-[440px] will-change-[opacity,transform]">

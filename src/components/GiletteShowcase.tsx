@@ -82,10 +82,24 @@ export default function GiletteShowcase() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }}>
+    <section ref={sectionRef} className="h-screen relative overflow-hidden" style={{ background: "#0E0E0C" }} data-cursor-zone="dark">
       <div ref={glowRef} className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(158,130,90,0.04) 0%, transparent 55%)" }} />
 
-      <div ref={bottleRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 will-change-transform">
+      <div ref={bottleRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 will-change-transform"
+        style={{ perspective: "800px" }}
+        onMouseMove={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          const img = e.currentTarget.querySelector("img");
+          if (img) gsap.to(img, { rotateY: x * 14, rotateX: -y * 9, duration: 0.8, ease: "power3.out" });
+        }}
+        onMouseLeave={(e) => {
+          const img = e.currentTarget.querySelector("img");
+          if (img) gsap.to(img, { rotateY: 0, rotateX: 0, duration: 1.4, ease: "power3.out" });
+        }}
+        data-cursor="découvrir"
+      >
         <div className="relative">
           <img src="/bottles/gilette.png" alt="Château Gilette" className="h-[55vh] md:h-[65vh] w-auto object-contain select-none" style={{ filter: "drop-shadow(0 40px 80px rgba(158,130,90,0.3))" }} />
           <div className="absolute inset-0 -z-10 blur-[100px] opacity-25" style={{ background: "radial-gradient(ellipse, #9E825A, transparent 70%)" }} />
