@@ -20,7 +20,6 @@ import GoldParticles from "@/components/GoldParticles";
 import MagneticButton from "@/components/MagneticButton";
 import KineticText from "@/components/KineticText";
 import FillText from "@/components/FillText";
-import ImageDistortion from "@/components/ImageDistortion";
 import Ambilight from "@/components/Ambilight";
 import { wines } from "@/lib/wines";
 
@@ -413,7 +412,10 @@ export default function Home() {
 
                     {/* Image side */}
                     <div className={`relative overflow-hidden photo-grade mb-6 md:mb-0 ${isRight ? "md:order-2" : "md:order-1"}`} data-reveal>
-                      <ImageDistortion src={item.image} alt={item.year} className="aspect-[16/10] md:aspect-[4/3]" />
+                      <div className="aspect-[16/10] md:aspect-[4/3] relative overflow-hidden group">
+                        <img src={item.image} alt={item.year} className="w-full h-[115%] object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.06] absolute top-[-7.5%] left-0" data-speed="-0.08" style={{ willChange: "transform" }} />
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(14,14,12,0.5) 0%, rgba(14,14,12,0.05) 50%)" }} />
+                      </div>
                       <div className="absolute bottom-5 left-6 z-10">
                         <span className="font-serif text-[clamp(36px,5vw,72px)] font-light text-white/90 leading-none tracking-[-2px]" style={{ textShadow: "0 2px 20px rgba(14,14,12,0.5)" }}>{item.year}</span>
                       </div>
