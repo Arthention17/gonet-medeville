@@ -6,7 +6,7 @@ interface Props { onComplete: () => void; }
 
 export default function Preloader({ onComplete }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const glassRef = useRef<SVGGElement>(null);
+  const glassRef = useRef<SVGSVGElement>(null);
   const outlineRef = useRef<SVGPathElement>(null);
   const stemRef = useRef<SVGPathElement>(null);
   const wineBodyRef = useRef<HTMLDivElement>(null);
