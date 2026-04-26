@@ -5,7 +5,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
-import Preloader from "@/components/Preloader";
 import Nav from "@/components/Nav";
 import SplitText from "@/components/SplitText";
 import EditorialGallery from "@/components/EditorialGallery";
@@ -35,8 +34,7 @@ const BubbleField = dynamic(() => import("@/components/BubbleField"), { ssr: fal
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const [ready, setReady] = useState(false);
-  const onDone = useCallback(() => setReady(true), []);
+  const [ready, setReady] = useState(true);
 
   // Hero
   const heroSec = useRef<HTMLElement>(null);
@@ -192,7 +190,6 @@ export default function Home() {
       <CustomCursor />
       <GoldParticles />
       <Ambilight />
-      <Preloader onComplete={onDone} />
 
       <BubbleField />
 
